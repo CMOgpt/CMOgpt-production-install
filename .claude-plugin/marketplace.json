@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "cmogpt-install",
+  "owner": {
+    "name": "CMOgpt",
+    "email": "support@cmogpt.io",
+    "url": "https://cmogpt.io"
+  },
+  "plugins": [
+    {
+      "name": "cmogpt",
+      "source": "./",
+      "description": "AI-powered business diagnosis and strategy for Shopify brands."
+    }
+  ]
+}

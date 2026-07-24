@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "CMOgpt": {
+      "url": "https://connector.cmogpt.io/mcp"
+    }
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "name": "cmogpt",
+  "displayName": "CMOgpt — AI CMO for Shopify",
+  "tagline": "AI-powered business diagnosis and strategy for Shopify brands.",
+  "version": "1.4",
+  "description": "ecommerce performance intelligence for DTC brands.",
+
+  "author": {
+    "name": "CMOgpt",
+    "email": "support@cmogpt.io",
+    "url": "https://cmogpt.io"
+  },
+
+  "server": {
+    "url": "https://connector.cmogpt.io/mcp",
+    "transport": "http-sse",
+    "auth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://connector.cmogpt.io/oauth/authorize",
+      "tokenUrl": "https://connector.cmogpt.io/oauth/token",
+      "scopes": ["read", "write"],
+      "pkce": true
+    }
+  },
+
+  "tools": [
+    {
+      "name": "about_my_store",
+      "title": "My Store Context",
+      "description": "Returns store profile including category, growth stage, and last Shopify order date. Used to establish session context before any analysis.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "about_my_account",
+      "title": "My Account Summary",
+      "description": "Returns CMOgpt account details including job_id required for all metric calls, current plan, and connected platforms.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_diagnosis",
+      "title": "Business Diagnosis",
+      "description": "Returns a pre-scored, ranked causal decision tree for a given metric over a specified period and depth. Used to identify root causes of metric movements.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_marketing_budget",
+      "title": "Marketing Budget",
+      "description": "Returns the current daily marketing budget configured for the store, including total daily spend amount and last-updated date. No additional parameters required.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_metrics_manifest",
+      "title": "Metrics Manifest",
+      "description": "Lists all available metrics in a specified domain (SALES, PROFITABILITY, REPEAT-BUSINESS, MARKETING, LTV).",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_metric_detail",
+      "title": "Metric Detail",
+      "description": "Returns detailed data for a specific metric including current value, benchmark comparison, and status.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_metric_history",
+      "title": "Metric History",
+      "description": "Returns historical daily data points for a metric over a specified lookback period (up to 90 days).",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_my_targets",
+      "title": "My Targets",
+      "description": "Returns the metric targets set by the founder for their business.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_benchmarks",
+      "title": "Industry Benchmarks",
+      "description": "Returns industry benchmark ranges for all applicable metrics, matched to the store's product category. No additional parameters required. Benchmark values are the reference point for gap scoring in get_diagnosis.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_business_domain",
+      "title": "Business Domains",
+      "description": "Lists valid business domains (SALES, PROFITABILITY, REPEAT-BUSINESS, MARKETING, LTV) for use as the metrics_domain parameter in get_metrics_manifest.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_cohort_analysis",
+      "title": "Cohort Analysis",
+      "description": "Returns weekly acquisition-cohort profitability over a span — a blended summary plus per-cohort rows tracking CAC, break-even, repeat rate, and contribution margin by days-since-first-order. Not available via get_metric_history.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_customer_profitability",
+      "title": "Customer Profitability",
+      "description": "Returns one customer's profitability metrics — margins, CAC, and break-even status — supported by their full order history.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_ltv_distribution",
+      "title": "LTV Distribution",
+      "description": "Returns customer LTV statistics by deciles and quartiles across the portfolio.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_ltv_segment",
+      "title": "LTV Segments",
+      "description": "Returns the latest customer LTV recency segmentation statistics (Active, Lapsed, Dormant, Churned) — counts, sales, and profitability margins per segment, including reactivation of Active customers from other segments.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_trading_week",
+      "title": "Trading Week",
+      "description": "Returns the list of COHORT-WEEK values and their FIRST-ORDER-DATE (Sunday-to-Saturday trading weeks), used to resolve cohort_date for get_cohort_analysis.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "list_ltv_customers",
+      "title": "LTV Customer List",
+      "description": "Returns a filtered, ranked list of customers by segment, LTV decile, and break-even status — used for whale-finding and win-back targeting. Limited to 200 results.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "list_recent_orders",
+      "title": "Recent Orders",
+      "description": "Returns up to 200 most recent Shopify orders enriched with CMOgpt contribution margin data. Used for data verification and onboarding.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "get_marketing_channels",
+      "title": "Marketing Channels",
+      "description": "Returns the store's active marketing channels and their platform_code values (e.g. Meta, Google, TikTok). Used to resolve platform_code before writing a marketing spend change.",
+      "readOnlyHint": true
+    },
+    {
+      "name": "upsert_marketing_spend",
+      "title": "Update Marketing Spend",
+      "description": "Writes a new daily marketing spend amount for a channel over a date range. Mutates live budget data — only called after the founder explicitly confirms platform_code, from_date, to_date, and marketing_amt.",
+      "readOnlyHint": false
+    },
+    {
+      "name": "upsert_target",
+      "title": "Update Target",
+      "description": "Writes a new founder-set target value for a metric. Mutates live target data — only called after the founder explicitly confirms metrics_name and metrics_value.",
+      "readOnlyHint": false
+    }
+  ],
+
+  "skills": [
+    "./skills/cmo-primary",
+    "./skills/cmo-router",
+    "./skills/cmo-health-check",
+    "./skills/cmo-diagnose-metrics",
+    "./skills/cmo-diagnose-contribution-margin",
+    "./skills/cmo-build-profit",
+    "./skills/cmo-optimize-marketing-budget",
+    "./skills/cmo-set-marketing-budget",
+    "./skills/cmo-explain-marketing-advertising",
+    "./skills/cmo-terminology",
+    "./skills/cmo-list-recent-orders",
+    "./skills/cmo-analyze-cohort",
+    "./skills/cmo-analyze-customer-profitability",
+    "./skills/cmo-analyze-ltv",
+    "./skills/cmo-inspect-customer",
+    "./skills/cmo-update-marketing-spend-business-target"
+  ],
+
+  "capabilities": {
+    "dataAccess": "read-write",
+    "useCases": [
+      "Weekly business health check — revenue, margin, MER, discount rate, and repeat ratio read as a system with a single verdict and priority action (cmo-health-check).",
+      "Targeted metric diagnosis — root-cause drill-down into any underperforming metric using a pre-scored causal decision tree (cmo-diagnose-metrics).",
+      "Contribution margin diagnosis — identify whether margin pressure is driven by discounting, COGS, shipping subsidy, or marketing cost, split by new vs repeat customers (cmo-diagnose-contribution-margin).",
+      "Growth quality diagnosis — evaluate whether revenue growth is compounding value or buying revenue at the expense of margin and retention; answers 'should I spend more on ads' (cmo-build-profit).",
+      "Marketing spend review — weekly recommendation to increase, hold, reduce, or cut spend based on MER trend and contribution margin, with a specific dollar amount, and can write the change to the connected channel once the founder confirms (cmo-optimize-marketing-budget).",
+      "Marketing budget setting — five-step MER method to calculate a data-grounded monthly and daily marketing budget, and can save the resulting daily spend and MER target once the founder confirms (cmo-set-marketing-budget).",
+      "Order verification — show recent Shopify orders enriched with contribution margin data to verify live data connection (cmo-list-recent-orders).",
+      "Cohort analysis — track acquisition-week cohorts of customers over time to see whether newer cohorts are more or less profitable, and how fast they reach break-even (cmo-analyze-cohort).",
+      "Customer profitability concepts — explains the RFM recency segmentation (Active/Lapsed/Dormant/Churned), LTV deciles/quartiles, and break-even/timing rules that anchor all profitability analysis (cmo-analyze-customer-profitability).",
+      "Customer LTV and payback — contribution LTV:CAC, payback days, and P1-P5 purchase-journey reasoning; the playbook for raising customer profitability, built on the concepts above (cmo-analyze-ltv).",
+      "Single customer inspection — full order history, CAC, margins, and break-even for one customer so the founder can trust the LTV/CAC numbers behind it (cmo-inspect-customer).",
+      "Marketing spend and target updates — can write a founder-confirmed marketing spend override or a business metric target once the founder explicitly confirms the values (cmo-update-marketing-spend-business-target)."
+    ],
+    "dataHandling": "CMOgpt reads Shopify order, customer, and sales data via a secure server-to-server integration. Data is stored in CMOgpt's infrastructure. This connector reads store data by default; it can also write a founder-confirmed marketing spend or target change back to CMOgpt, but only after the founder explicitly authorizes that specific change — no write is ever issued silently. No conversation data is collected or stored. Data is not shared with third parties other than Shopify (source) and Anthropic (Claude processing). Retention follows CMOgpt's privacy policy at https://cmogpt.io/privacy."
+  },
+
+  "branding": {
+    "logoUrl": "https://cjmap.cmogpt.io/cmogpt-logo.png",
+    "faviconUrl": "https://cjmap.cmogpt.io/cmogpt-logo.png"
+  },
+
+  "privacyPolicyUrl": "https://cmogpt.io/privacy",
+  "documentationUrl": "https://cmogpt.io/mcp",
+  "supportUrl": "https://cmogpt.io/contact",
+  "category": "ecommerce",
+  "tags": ["shopify growth", "advisory", "marketing", "business coach"]
+}
