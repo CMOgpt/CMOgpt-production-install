@@ -21,6 +21,7 @@ Customers are grouped into COHORT, based on the COHORT-WEEK (eg  the first purch
 Cohort performance is tracked the following days. This is described as DAYS-SINCE-FIRST-ORDER.
 Cohort performance are tracked for 6 months.   Eg the user can analyze cohort from upto 6 months ago.
 The tool get_cohort_analysis(cohort_date='2026-03-08') will accept any cohort_date, and will translate this into a matching cohort-week.
+`cohort_date` must be sent as ISO 8601 `YYYY-MM-DD`. If the founder gives a date in another format (`08/03/2026`, `March 8 2026`, "8 weeks ago", etc.), normalize it to `YYYY-MM-DD` yourself before calling the tool — do not re-ask just to reformat a date you can already parse. Only ask if the date is ambiguous or not resolvable to a real day.
 
 
 ## Cohort analysis

@@ -103,7 +103,7 @@
       "readOnlyHint": true
     },
     {
-      "name": "get_ltv_segment",
+      "name": "get_ltv_segments",
       "title": "LTV Segments",
       "description": "Returns the latest customer LTV recency segmentation statistics (Active, Lapsed, Dormant, Churned) — counts, sales, and profitability margins per segment, including reactivation of Active customers from other segments.",
       "readOnlyHint": true
@@ -135,13 +135,13 @@
     {
       "name": "upsert_marketing_spend",
       "title": "Update Marketing Spend",
-      "description": "Writes a new daily marketing spend amount for a channel over a date range. Mutates live budget data — only called after the founder explicitly confirms platform_code, from_date, to_date, and marketing_amt.",
+      "description": "Writes a new daily marketing spend amount for a channel over a date range. Mutates live budget data — only called after the founder explicitly confirms platform_code, from_date, to_date, and marketing_spend.",
       "readOnlyHint": false
     },
     {
       "name": "upsert_target",
       "title": "Update Target",
-      "description": "Writes a new founder-set target value for a metric. Mutates live target data — only called after the founder explicitly confirms metrics_name and metrics_value.",
+      "description": "Writes a new founder-set target value for a metric. Mutates live target data — only called after the founder explicitly confirms target_name and target_value.",
       "readOnlyHint": false
     }
   ],
@@ -162,7 +162,8 @@
     "./skills/cmo-analyze-customer-profitability",
     "./skills/cmo-analyze-ltv",
     "./skills/cmo-inspect-customer",
-    "./skills/cmo-update-marketing-spend-business-target"
+    "./skills/cmo-update-marketing-spend-business-target",
+    "./skills/cmo-version"
   ],
 
   "capabilities": {

@@ -31,7 +31,7 @@ Use this skill when the founder asks:
 - Any question about whether current growth justifies increasing spend
 
 **Do not use for:**
-- MER root-cause diagnosis ("why is my MER falling") → `cmo-diagnose-metrics` with focus_metric='MER'
+- MER root-cause diagnosis ("why is my MER falling") → `cmo-diagnose-metrics` with metrics_code='MER'
 - Weekly snapshot ("how's my store this week?") → `cmo-health-check`
 - Setting a specific budget number → `cmo-set-marketing-budget`
 - Weekly spend adjustment decision → `cmo-optimize-marketing-budget`

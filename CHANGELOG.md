@@ -68,6 +68,73 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
   backing stored procedures may not be deployed (`1pd_SQL` has a `-- not built yet` comment
   on both). Needs confirmation before continuing to expose them as always-available tools
 
+### Follow-up — 2026-07-25 (DB reconciliation completed; debug/demo re-synced from prod)
+
+With the DB tool definitions now reconciled to match the skill docs (see above), this
+pass closes out the remaining internal inconsistencies and propagates the fixed content
+to `plugin-debug` and `plugin-demo`.
+
+- `cmo-router` — was still stale against `plugin.json`'s own `skills[]`: routed to the
+  retired `cmo-measure-customer-ltv` and was missing routes for `cmo-set-marketing-budget`,
+  `cmo-explain-marketing-advertising`, `cmo-analyze-ltv`, `cmo-analyze-customer-profitability`,
+  `cmo-inspect-customer`, `cmo-list-recent-orders`, `cmo-terminology`. Filled in the full
+  routing table and "what CMOgpt can do" summary
+- `cmo-primary` — added the "every tool call must carry a real `skill_name`" governance
+  section, the `list_ltv_customers` no-placeholder-values guard, and the `date_range`
+  (1–90 day) validation block — these existed only in the debug copy and had not been
+  ported back
+- Fixed broken cross-skill references: `/cmo-adjust-marketing-budget` →
+  `/cmo-optimize-marketing-budget` (`cmo-set-marketing-budget`); `cmo-analyze-cohorts` →
+  `cmo-analyze-cohort` and `cmo-analyze-segments` → `cmo-analyze-customer-profitability`
+  (`cmo-analyze-ltv`, neither of which was ever a real skill name)
+- `cmo-diagnose-metrics`, `cmo-build-profit` — `focus_metric`/`focus_domain` → `metrics_code`
+  (matches the real param name; these two skills had not picked up the 1.4 rename)
+- `cmo-inspect-customer` — removed a stray leading `--` line that broke the file's YAML
+  frontmatter
+- `cmo-analyze-customer-profitability` — front-matter `description:` block was not
+  indented under the YAML `>` fold and had prose bleeding past the closing `---`,
+  corrupting the frontmatter; rewritten with the corrected structure already used in the
+  debug copy
+- `cmo-list-recent-orders` — corrected stale `# cmo-recent-orders` heading to
+  `# cmo-list-recent-orders`
+- `cmo-analyze-cohort` — added `cohort_date` ISO-8601 normalization guidance (accept and
+  silently convert common date formats instead of re-prompting)
+- `cmo-terminology` — kept prod's `CUSTOMERS-DORMANT`/`CUSTOMERS-CHURNED` definitions
+  (non-overlapping 180–275 / 275–365 day bands with an explicit "past 365 days = treated
+  as lost" note) over the debug copy's vaguer version
+- `plugin.json` — `tools[]` still declared `get_ltv_segment` (singular) and described
+  `upsert_marketing_spend`/`upsert_target` params as `marketing_amt`/`metrics_name`/
+  `metrics_value`, disagreeing with the skill docs. Renamed to `get_ltv_segments` and
+  corrected the write-tool descriptions to `marketing_spend`/`target_name`/`target_value`,
+  per the "skill docs are source of truth" decision above
+
+### Downstream — plugin-debug and plugin-demo brought current
+
+- `plugin-debug` fully regenerated from this reconciled prod content (mechanically
+  stripped of `job_id` — debug hard-codes it server-side instead of resolving it from
+  the logged-in user). Diff between prod and debug skills is now exactly the `job_id`
+  handling difference, nothing else. `plugin.json` bumped to `1.4` to match
+- `plugin-demo` had not been merged from prod in a long time and was missing 5 skills
+  entirely (`cmo-analyze-cohort`, `cmo-analyze-customer-profitability`, `cmo-analyze-ltv`,
+  `cmo-inspect-customer`, `cmo-update-marketing-spend-business-target`) — added, adapted
+  to demo conventions (`_demo` tool suffixes, `log_demo_question` logging, sample-store
+  framing, standard CTA). Also fixed several real bugs where demo skills called bare
+  tool names missing the `_demo` suffix (`get_diagnosis`, `get_metric_history`,
+  `get_marketing_budget` used without suffix in 4 skills) and reconciled param naming
+  (`marketing_amt`/`metrics_name`/`metrics_value` → `marketing_spend`/`target_name`/
+  `target_value`) now that the demo SP is a duplicate of prod's. `plugin.json` bumped to
+  `1.4` to match. See `plugin-demo/CHANGELOG.md` for the full list
+
+### Skills — new
+
+- `cmo-version` — reports the installed plugin version, build, and release date, so it's
+  possible to tell which build is active when multiple plugin versions may be installed.
+  Previously existed on disk but was never usable: broken YAML frontmatter (UTF-8 BOM,
+  `name:cmo-version` missing the required space) and absent from `plugin.json`'s
+  `skills[]`. Rewritten with valid frontmatter, trimmed to just version/build/release-date
+  (dropped the stale "new features"/"retired features" sections), and registered in
+  `skills[]`
+
 ---
 
 ## [1.3] — 2026-07-17

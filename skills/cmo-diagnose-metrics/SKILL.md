@@ -69,7 +69,7 @@ If `shopify_last_order_date` is more than 2 days old, flag it before proceeding.
 Before calling any diagnosis tool, clarify the focus:
 
 **If the founder has named a metric or domain** (e.g. "why is my MER falling",
-"diagnose my profitability") — use that as `focus_metric` or `focus_domain`.
+"diagnose my profitability") — use that as `metrics_code`.
 
 **If the question is open without a named metric** — do not proceed with this
 skill. Route to `/cmo-health-check`, which runs the scan from SALES-AMT.
@@ -88,9 +88,9 @@ skill. Route to `/cmo-health-check`, which runs the scan from SALES-AMT.
 
 **For a focused question (named metric or domain):**
 ```
-get_diagnosis(job_id, focus_metric, day_span, depth)
+get_diagnosis(job_id, metrics_code, day_span, depth)
 ```
-- `focus_metric` — the metric or domain root the founder named
+- `metrics_code` — the metric or domain root the founder named
 - `day_span` — default 30 days for strategic questions; use 7 for weekly questions
 - `depth` — default 3; use 4 for a deeper investigation if the initial result
   points to a child you need to go further into
@@ -123,7 +123,7 @@ fetch it:
 
 - If the lead finding from `ranked_candidates` points toward an unloaded domain
   (e.g. a margin problem that could be an acquisition-cost problem → MER domain
-  unloaded), call `get_diagnosis` again with `focus_domain` set to that domain.
+  unloaded), call `get_diagnosis` again with `metrics_code` set to that domain.
 - Prefer fetching the domain **root** first (`domains.<d>.root`) rather than a
   specific child — one call gives you coverage of the whole domain.
 - Prioritise fetching **high-weighting, has_benchmark=true** nodes from the

@@ -1,12 +1,13 @@
 ---
 name: cmo-analyze-ltv
 description: >
-  Customer lifetime value and payback analysis for Shopify brands. Use when the
+  Playbook for increasing customer profitability for Shopify brands, built on the
+  concepts and segments defined in cmo-analyze-customer-profitability. Use when the
   founder asks "are my customers profitable", "what's my LTV to CAC", "how long
   until a customer pays back", "who are my best customers", or "is my first order
   losing money". Reasons on contribution LTV, not revenue LTV, anchored on the
   portfolio LTV root and the P1-P5 journey. Routes single-customer drill-downs to
-  cmo-inspect-customer and acquisition-day quality to cmo-analyze-cohorts.
+  cmo-inspect-customer and acquisition-day quality to cmo-analyze-cohort.
 ---
 
 # CMOgpt — Customer LTV & Payback
@@ -51,4 +52,6 @@ before scaling spend — buying more customers today buys unprofitable ones."
 
 ## Boundaries
 Single customer → cmo-inspect-customer. Cohort quality over time →
-cmo-analyze-cohorts. Segment mix / retention → cmo-analyze-segments.
+cmo-analyze-cohort. Definitions of RFM segments, deciles, or LTV timing/history
+rules → cmo-analyze-customer-profitability (this skill assumes those concepts,
+it doesn't re-explain them).

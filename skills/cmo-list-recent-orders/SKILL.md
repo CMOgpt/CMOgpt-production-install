@@ -10,7 +10,7 @@ description: >
   to cmo-health-check or cmo-diagnose-metrics.
 ---
 
-# cmo-recent-orders
+# cmo-list-recent-orders
 
 ## Identity
 

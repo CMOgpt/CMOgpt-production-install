@@ -292,6 +292,6 @@ Close with: "To track performance against this budget weekly, use
 ## What this skill is not
 
 This skill sets the budget number. It does not manage weekly spend
-adjustments based on live performance — that is `/cmo-adjust-marketing-budget`.
+adjustments based on live performance — that is `/cmo-optimize-marketing-budget`.
 It does not explain the difference between marketing and advertising — that
 is `/cmo-explain-marketing-advertising`.

@@ -41,7 +41,6 @@ Use this skill when the founder asks:
 ### Step 1 — Get session context
 
 Call `about_my_account`. Extract and hold:
-- `job_id` — required for every tool call in this skill
 - `plan` — determines which metrics and domains are available
 
 Call `about_my_store`. Extract:
@@ -60,9 +59,8 @@ If either tool returns an error or the connector is not installed, tell the user
 
 ### Step 2 — Run the sales diagnosis
 
-Call `get_diagnosis(job_id, 'SALES-AMT', 7, 3)`.
+Call `get_diagnosis('SALES-AMT', 7, 3)`.
 
-- `job_id` — from Step 1
 - `'SALES-AMT'` — start from total revenue, the natural weekly entry point
 - `7` — look back 7 days (current trading week)
 - `3` — drill 3 levels deep into the revenue decision tree
@@ -84,12 +82,12 @@ Call `get_metric_history` for each of these metrics, lookback 14 days (gives you
 this week and last week for comparison):
 
 ```
-get_metric_history(job_id, 'AOV', 14)
-get_metric_history(job_id, 'BUDGET-DAILY', 14)
-get_metric_history(job_id, 'CONTRIBUTION-MARGIN', 14)
-get_metric_history(job_id, 'MER', 14)
-get_metric_history(job_id, 'ORDER-DISC-PCT', 14)
-get_metric_history(job_id, 'REPEAT-RATIO', 14)
+get_metric_history('AOV', 14)
+get_metric_history('BUDGET-DAILY', 14)
+get_metric_history('CONTRIBUTION-MARGIN', 14)
+get_metric_history('MER', 14)
+get_metric_history('ORDER-DISC-PCT', 14)
+get_metric_history('REPEAT-RATIO', 14)
 ```
 
 These six give you the context the diagnosis engine may not surface if its top

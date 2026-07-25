@@ -1,10 +1,20 @@
 ---
 name: cmo-analyze-customer-profitability
 description: >
-Evaluate the profitability of customers to the business. CMOgpt calculate the revenue and contributionn of the entire customer base (the PORTFOLIO). 
-It further segment customers by their recency of purchase.
-This allows the ecomm owners to measure profitability, and design loyalty or retention program.
-# business answers
+  Concept and terminology anchor for customer profitability. Explains the RFM
+  segmentation model (Active, Lapsed, Dormant, Churned), how CMOgpt calculates
+  portfolio revenue vs. contribution, decile/quartile ranking, and the timing
+  and history rules behind LTV. Use when the founder needs the definitions and
+  mechanics grounded before or during a profitability discussion — this is the
+  foundation cmo-analyze-ltv's playbook is built on. Routes acquisition-cohort
+  questions to cmo-analyze-cohort and the "how do I raise profit" playbook to
+  cmo-analyze-ltv.
+
+---
+
+# LTV segments
+
+## Business answers
 Customer LTV answer these questions from ecomm founders :
 1.	Which customers are actually profitable once acquisition cost is subtracted?
 2.	What is my portfolio contribution LTV:CAC, and is it above 3:1?
@@ -16,10 +26,6 @@ Customer LTV answer these questions from ecomm founders :
 8.	Who are my whales (top-decile LTV) and what do they share?
 9.	Does the P1 to P2 gap predict whether a customer becomes valuable?
 10.	If I push CAC higher to acquire faster, at what point does LTV:CAC break?
-Routes acquisition-   cohort questions to cmo-analyze-cohorts.
----
-
-# LTV segments
 Customer LTV is based on a typical consumer retail RFM model.  
 ## Recency segments
 Recency is the days since last purchase.  This is grouped into 4 segments : Active, Lapsed, Dormant and Churned. The cutoff days of these segments are stored in about_my_account. By default these are 90, 180, 270, 365 days.    These can be changed. Tell the founder to contact CMOgpt support to request a one time change
@@ -65,6 +71,7 @@ use the following tools to advice ecomm founders and build strategy
 `list_ltv_customers`, `customers_frequency`, `customer_recency`, `customer_CAC`,  `customers_contribution_LTV`, `customers_contribution_margin_PCT`, 
 `customers_marketing_cost`, `is_break_even_PCT`, `ltv_cac_ratio`, `contribution_ltv_cac_ratio`, 
 `customers_recency`, `customers_net_gain`, `reactivated_from_lapsed`, `reactivated_from_dormant`, `reactivated_from_churned`
-- `list_ltv_customers(segment, ltv_decile, is_break_even, list_order)`  - returns the top a list of customers of a specific segment (Active, Lapsed, Dormant etc), LTV band, and is_break_even status
+- `list_ltv_customers(segment, ltv_decile, is_break_even, list_order)`  - returns the top a list of customers of a specific segment (Active, Lapsed, Dormant etc), LTV band, and is_break_even status.
+  **Never call this with guessed or placeholder values.** Each field accepts only exact literal values: `segment` is one of the lowercase strings `active`/`lapsed`/`dormant`/`churned` (the tool validates lowercase — present capitalized to the founder, send lowercase), `ltv_decile` is a single integer chosen from `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10` — present all 10 as individual choices, never group them into ranges/buckets like "1-3" or "4-10", `is_break_even` is `1` or `0`, `list_order` is the literal string `ASC` or `DESC` (never a word like "ascending"/"descending" — the tool rejects that). Do not paraphrase or substitute a synonym for any of these before calling. `segment`, `ltv_decile`, `is_break_even`, and `list_order` have no default and no "any"/"all"/wildcard value — present these choices and have the founder pick, or ask directly, before calling; do not call until all four are confirmed to one exact value each. If the founder wants results spanning multiple segments or deciles, that means separate confirmed calls, not a single wildcard call. Never loop the tool across multiple segment/decile combinations to "search" for a non-empty result; if a confirmed combination returns empty, report that and ask the founder how to adjust.
 - `get_customer_profitability(customer_id)` to inspect a customer's profitability, showing a full order history, cost of acquisition, marketing, margins and profitability
 

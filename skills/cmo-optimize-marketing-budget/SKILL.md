@@ -61,7 +61,6 @@ of day count.
 ### Step 1 — Get store and account context
 
 Call `about_my_account`. Extract:
-- `job_id` — required for all tool calls
 - `plan` — determines metric access
 
 Call `about_my_store`. Extract:
@@ -80,14 +79,14 @@ included." Proceed; do not abort.
 Call these in parallel:
 
 ```
-get_metric_history(job_id, 'MER', 14)
-get_metric_history(job_id, 'SALES-AMT', 14)
-get_metric_history(job_id, 'CONTRIBUTION-MARGIN', 14)
-get_metric_history(job_id, 'BUDGET-DAILY', 14)
-get_metric_history(job_id, 'ORDER-DISC-PCT', 14)
-get_marketing_budget(job_id)
-get_my_targets(job_id)
-get_benchmarks(job_id)
+get_metric_history('MER', 14)
+get_metric_history('SALES-AMT', 14)
+get_metric_history('CONTRIBUTION-MARGIN', 14)
+get_metric_history('BUDGET-DAILY', 14)
+get_metric_history('ORDER-DISC-PCT', 14)
+get_marketing_budget()
+get_my_targets()
+get_benchmarks()
 ```
 
 From the results, calculate for each metric:

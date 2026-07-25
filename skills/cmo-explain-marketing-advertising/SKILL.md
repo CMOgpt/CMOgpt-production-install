@@ -47,7 +47,6 @@ Use this skill when the founder asks:
 ### Step 1 — Get store context
 
 Call `about_my_account` and `about_my_store`. Extract:
-- `job_id` — required for any tool calls
 - `growth_stage` — determines the default acquisition/retention allocation
   to reference when explaining budget splits
 - `category` — informs which cost lines are typically significant for this
@@ -131,7 +130,7 @@ denominator is larger. It is a more honest measure of marketing efficiency.
 > retainer, creative fees, or email platform, their real Full-Loaded MER
 > may be 3.2x. The contribution margin picture looks very different.
 
-If live data is available, pull `get_metric_history(job_id, 'MER', 30)` to
+If live data is available, pull `get_metric_history('MER', 30)` to
 show the founder their actual MER trend alongside this explanation.
 
 ---
@@ -209,7 +208,7 @@ founder's specific stage in your explanation. Tell them what the default
 allocation looks like for a brand at their stage, and whether their current
 spend pattern appears to match it.
 
-If live budget data is available, call `get_marketing_budget(job_id)` and
+If live budget data is available, call `get_marketing_budget()` and
 show the founder where their current spend sits relative to this framework.
 
 ---

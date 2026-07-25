@@ -34,8 +34,14 @@ Use this skill when:
 - Margin/profitability focus → go directly to `cmo-diagnose-contribution-margin`
 - Growth quality / spend decision → go directly to `cmo-build-profit`
 - Weekly/daily spend adjustment → go directly to `cmo-optimize-marketing-budget`
+- Setting a new marketing budget → go directly to `cmo-set-marketing-budget`
+- Explaining marketing/advertising concepts → go directly to `cmo-explain-marketing-advertising`
 - Cohort performance → go directly to `cmo-analyze-cohort`
-- Customer LTV / profitability → go directly to `cmo-measure-customer-ltv`
+- Customer LTV : CAC / payback → go directly to `cmo-analyze-ltv`
+- Definitions of LTV/RFM concepts (recency segments, deciles, timing rules) → go directly to `cmo-analyze-customer-profitability`
+- Single customer drill-down → go directly to `cmo-inspect-customer`
+- Recent orders / data verification → go directly to `cmo-list-recent-orders`
+- Term or metric-code definition → go directly to `cmo-terminology`
 
 ---
 
@@ -100,8 +106,14 @@ routing — just invoke the appropriate skill.
 | "Am I making money?" / "Where's my profit going?" / "Why is margin down?" | `cmo-diagnose-contribution-margin` |
 | "Should I spend more on ads?" / "Is my growth healthy?" / "Is my growth profitable?" | `cmo-build-profit` |
 | "Adjust my ad budget" / "Should I cut spend?" / "Review my marketing budget" | `cmo-optimize-marketing-budget` |
+| "What should my marketing budget be?" / "How much should I spend on ads?" | `cmo-set-marketing-budget` |
+| "What is MER?" / "What's the difference between marketing and advertising?" | `cmo-explain-marketing-advertising` |
 | "How are my customer cohorts performing?" / "Are newer cohorts more profitable?" | `cmo-analyze-cohort` |
-| "What's my customer LTV?" / "Who are my most profitable customers?" | `cmo-measure-customer-ltv` |
+| "What's my LTV to CAC?" / "How long until a customer pays back?" | `cmo-analyze-ltv` |
+| "What does Active/Lapsed/Dormant/Churned mean?" / "How is LTV calculated?" | `cmo-analyze-customer-profitability` |
+| "Show me customer X" / "Why is this customer profitable" | `cmo-inspect-customer` |
+| "Show me my recent orders" / "Can I see my orders" | `cmo-list-recent-orders` |
+| "What does [term/metric code] mean?" | `cmo-terminology` |
 | "Update my marketing spend" / "Set a business target" | `cmo-update-marketing-spend-business-target` |
 | "What can you do?" / "What skills do you have?" | Explain (Step 5) |
 | Anything else unclear | Ask one clarifying question (Step 6) |
@@ -139,8 +151,14 @@ slash-command names as if they are the product — describe what the founder get
 > over time, so you can see whether newer cohorts are more or less profitable
 > than older ones.
 >
-> **Customer LTV** — I segment your customer base by recency and profitability so
-> you know who's actually worth acquiring and retaining.
+> **Customer LTV** — I tell you whether customers are worth more than they cost,
+> anchored on contribution LTV:CAC and payback, and segment your base by recency
+> and profitability so you know who's worth retaining. I can also drill into a
+> single customer's numbers, or pull up your most recent orders to verify the data.
+>
+> **Marketing budget** — I set a data-grounded budget from your numbers, explain
+> marketing concepts like MER, and keep terminology on hand if a metric code
+> ever needs explaining.
 >
 > Where would you like to start?"
 

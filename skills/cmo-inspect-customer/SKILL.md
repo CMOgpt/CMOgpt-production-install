@@ -1,4 +1,3 @@
---
 ---
 name: cmo-inspect-customer
 description: >
