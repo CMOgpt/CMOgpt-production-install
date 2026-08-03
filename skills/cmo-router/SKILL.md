@@ -1,4 +1,3 @@
-
 ---
 name: cmo-router
 description: >
@@ -8,7 +7,6 @@ description: >
   to start", or opens a conversation without a specific question. Also handles
   connector setup for first-time users. Routes to the right CMOgpt skill once
   intent is clear. Does not perform analysis itself.
-
 ---
 
 # CMOgpt — Router
@@ -35,6 +33,9 @@ Use this skill when:
 - Named metric + diagnosis → go directly to `cmo-diagnose-metrics`
 - Margin/profitability focus → go directly to `cmo-diagnose-contribution-margin`
 - Growth quality / spend decision → go directly to `cmo-build-profit`
+- Weekly/daily spend adjustment → go directly to `cmo-optimize-marketing-budget`
+- Cohort performance → go directly to `cmo-analyze-cohort`
+- Customer LTV / profitability → go directly to `cmo-measure-customer-ltv`
 
 ---
 
@@ -68,51 +69,21 @@ If `shopify_last_order_date` is more than 2 days old, note it briefly:
 > "Your store data is current to [date] — I'll work with what's available."
 
 ---
-### Step 3 — First-time insight, or greet a returning founder
 
-Before greeting, check whether this is the founder's first session with a
-connected store. Call `get_my_targets` and look for `ONBOARDING_INSIGHT_DELIVERED`.
+### Step 3 — Greet and orient
 
-**If the flag is not present (first contact):**
+Greet the founder by store name. Keep it short — one or two sentences that
+establish you understand their business context, then ask or offer.
 
-Run a lightweight diagnosis before saying anything else — this replaces the
-greeting, it doesn't precede it:
+Example for a returning founder (data already loaded):
+> "Good to see you, [store_name]. You have [X] days of history loaded.
+> What would you like to look at — your weekly health, a specific metric,
+> or something else?"
 
-- Call `get_diagnosis('SALES-AMT', 7, 2)` — depth 2, not 3. This is the fast,
-  one-level version: enough for a headline finding, not the full six-metric
-  health check.
-- From the response, extract exactly two things:
-  1. The week-over-week SALES-AMT change (`metrics_value` vs `metrics_value_last_period`)
-  2. Whichever driver has the worst `business_aware_status`
-     (`under_pressure` or `deteriorating`) with a real `benchmark_gap` —
-     ignore `no_signal` nodes.
-- Present this as 3-4 sentences. No table, no six-metric ritual. State the
-  sales number, name the one driver worth knowing about, then offer a next
-  step. Nothing else.
-
-Example:
-> "Welcome to CMOgpt, [store_name]. Here's the one thing worth knowing right
-> now: your sales are up 51% week-over-week to $54,475 — but your conversion
-> rate is sitting at 1.6%, well below the 1.8%–4.5% range typical for your
-> category. Want me to dig into that, or would you rather see the full
-> weekly health check?"
-
-**Edge case:** if the store has too little history for a meaningful 7-day
-comparison (new connector, `account_days` under ~7, or `get_diagnosis`
-returns no usable signal), skip this branch entirely and use the returning-
-founder greeting below instead. Don't force an insight out of insufficient
-data.
-
-After delivering the first-insight response (or after skipping it due to
-insufficient data), call `upsert_target` to set
-`ONBOARDING_INSIGHT_DELIVERED = 1` so this branch never fires again for this
-founder.
-
-**If the flag is already present (returning founder):**
-
-> "Good to see you, [store_name]. You have [X] days of history loaded. What
-> would you like to look at — your weekly health, a specific metric, or
-> something else?"
+Example for a first-time session:
+> "Welcome to CMOgpt, [store_name]. I'm connected to your store data and
+> ready to help. The best place to start is your weekly health check — want
+> me to run that now, or is there a specific metric you'd like to dig into?"
 
 ---
 
@@ -129,6 +100,9 @@ routing — just invoke the appropriate skill.
 | "Am I making money?" / "Where's my profit going?" / "Why is margin down?" | `cmo-diagnose-contribution-margin` |
 | "Should I spend more on ads?" / "Is my growth healthy?" / "Is my growth profitable?" | `cmo-build-profit` |
 | "Adjust my ad budget" / "Should I cut spend?" / "Review my marketing budget" | `cmo-optimize-marketing-budget` |
+| "How are my customer cohorts performing?" / "Are newer cohorts more profitable?" | `cmo-analyze-cohort` |
+| "What's my customer LTV?" / "Who are my most profitable customers?" | `cmo-measure-customer-ltv` |
+| "Update my marketing spend" / "Set a business target" | `cmo-update-marketing-spend-business-target` |
 | "What can you do?" / "What skills do you have?" | Explain (Step 5) |
 | Anything else unclear | Ask one clarifying question (Step 6) |
 
@@ -136,7 +110,7 @@ routing — just invoke the appropriate skill.
 
 ### Step 5 — If the founder asks what CMOgpt can do
 
-Give a brief plain-language summary of the seven available skills. Do not list
+Give a brief plain-language summary of the available skills. Do not list
 slash-command names as if they are the product — describe what the founder gets:
 
 > "Here's what I can help with:
@@ -161,16 +135,12 @@ slash-command names as if they are the product — describe what the founder get
 > margin against your budget plan and tell you specifically whether to increase,
 > hold, reduce, or cut spend this week — with a dollar amount attached.
 >
-> **Customer LTV review** — If you want to understand profit contribution from customers, 
-> and their purchasing pattern, I'll analyze your portfolio, tell you where your profit is 
-> coming from and the strategy to grow more profitable customers.
+> **Cohort analysis** — I track how each weekly cohort of new customers performs
+> over time, so you can see whether newer cohorts are more or less profitable
+> than older ones.
 >
-> **Cohort analysis** — I group your customers by the month they first purchased
-> and track how each cohort's spend, repeat rate, and margin unfold over the
-> following weeks. This shows whether the customers you're acquiring now are
-> turning into more valuable customers than the ones you acquired before, and
-> which pricing, discount, or marketing decisions actually produced your
-> best-performing acquisition periods.
+> **Customer LTV** — I segment your customer base by recency and profitability so
+> you know who's actually worth acquiring and retaining.
 >
 > Where would you like to start?"
 

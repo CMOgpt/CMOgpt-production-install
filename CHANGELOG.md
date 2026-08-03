@@ -4,6 +4,13 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
 
 ---
 
+## [1.41] — 2026-08-03
+
+### Bug fixes — tool-name drift against `plugin.json`
+
+- `cmo-primary` — corrected `get_ltv_segment` (singular) → `get_ltv_segments` (plural),
+  matching the tool declared in `plugin.json` and the live SP
+
 ## [1.4] — 2026-07-24
 
 ### Bug fixes — tool-call parameter drift (root cause of `list_ltv_customers` failing/looping on claude.ai)
