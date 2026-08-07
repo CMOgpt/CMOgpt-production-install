@@ -4,6 +4,39 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
 
 ---
 
+## [1.42] — 2026-08-07
+
+### Skills — `cmo-primary` visual output overhaul
+
+- Added a "Business topics" rule: after any reply that surfaces a finding
+  (not a plain data lookup), close with exactly one next-step suggestion
+  grounded in a metric/domain not yet explored this session; don't repeat a
+  domain already offered and declined
+- Added a "Visual output convention" section describing the host's compact
+  visual cards (KPI/metric tiles, ranked step lists, clickable prompt
+  chips) and the prose rules around them: concise/mobile-first/scannable
+  replies, a 1-2 sentence prose lead-in with no numbers, 2-4 metric cards
+  colored by state (not category) for the "Why", ranked step lists instead
+  of numbered paragraphs for multi-action plans, chips/buttons instead of
+  numbered prose menus, and a 2-4 sentence prose budget before the CTA
+- Added the `cmo-card` fenced-block output format as the mandatory default
+  shape for every finding-bearing reply on the production plugin: a single
+  JSON object per reply with `headline`, `state`, up to 4 `metrics`,
+  `doThis`, and up to 3 `goDeeper` chip prompts. Documented field rules
+  (headline states fact + mechanism, not just the fact; `doThis` must name
+  a specific lever and target number; plain prose stays for the lead-in and
+  single-action replies with no metrics to show)
+- Removed the "What you are not" boundary section (dashboard/reporting-tool
+  disclaimer), superseded by the new card-based output convention
+
+### Manifest
+
+- Bumped `version` to `1.42`
+- `cmo-version` — updated to report `1.42`, build `260807`, release date
+  `2026-08-07`
+
+---
+
 ## [1.41] — 2026-08-03
 
 ### Bug fixes — tool-name drift against `plugin.json`
