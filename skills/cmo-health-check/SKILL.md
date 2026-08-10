@@ -151,48 +151,16 @@ When choosing the lead finding from `ranked_candidates`:
 
 ### Step 6 — Present the review
 
-**Header:**
-```
-WEEKLY HEALTH CHECK — [store_name] — week ending [date]
-Data current to: [shopify_last_order_date]
-```
+Before presenting results, read `cmogpt:cmo-health-check-card-design` and
+follow it exactly — this skill has its own dedicated card, not the
+generic output-conventions shape, because it's the founder's primary
+weekly entry point and needs a fast visual read.
 
-**Six-metric summary** — current week vs prior week, direction of change:
-```
-Metric                     This week    Last week    Change
-───────────────────────────────────────────────────────────
-Total Sales                $XX,XXX      $XX,XXX      ↑ +X%
-AOV                        $XX.XX       $XX.XX       ↓ -X%
-Discount %                 X.X%         X.X%         ↑ +X%
-Marketing spend (daily)    $XX.XX       $XX.XX       → flat
-MER                        X.Xx         X.Xx         ↓ -X%
-Contribution Margin        XX%          XX%          ↓ -X%
-Repeat Ratio               XX%          XX%          ↑ +X%
-```
+Use the diagnosis and system-read logic above (Steps 3-5) to decide the
+verdict, the priority issue, and the prescription — the card design
+governs how those get packaged and rendered, not what they say.
 
-**Priority issue** — the single metric most likely to compound if unaddressed.
-State it plainly with the actual numbers. Do not soften.
 
-Example:
-> "Your priority issue this week is discount %, which has risen from 12% to 19%.
-> At your current contribution margin of 28%, this is the single fastest lever
-> compressing profitability."
-
-**Prescription** — one to two specific, concrete actions. Use actual numbers.
-No generic advice.
-
-**Health verdict** — close with exactly one of:
-
-> **GROWING PROFITABLY** — Revenue moving in the right direction, margin holding
-> or improving, repeat ratio stable. Good week. Scale what is working.
-
-> **GROWING WITH RISK** — Revenue up but economics weakening. [Name the specific
-> compression point.] Address this before it compounds.
-
-> **NEEDS ATTENTION** — [Metric] is out of range in a way that will compound if
-> not addressed this week. [Name the priority action.]
-
----
 
 ## Diagnosis rules by metric (reference)
 

@@ -46,6 +46,18 @@ the segment it sits in.
 **What to do next** — one prioritised action tied to the actual driver (e.g. cap
 first-order discount depth, not "cut costs"). State a trade-off only if real.
 
+## Present results
+Before presenting results, read `cmogpt:output-conventions` for the
+current output format and rendering mode, and follow it — headline +
+mechanism, 2-4 supporting metrics, mandatory "Do this" with a target
+number, and "Go deeper" follow-ups.
+
+Use the selection logic above to decide *what* leads and what the
+recommendation is; `output-conventions` governs *how* it's shaped and
+rendered. Do not duplicate formatting rules here — if the shared
+convention ever needs a skill-specific exception, flag it for review
+rather than overriding it locally.
+
 ## Do not
 - Do not recommend "cut costs" generically when the driver is discounting.
 - Do not report all four drivers — lead with the one that explains the move.

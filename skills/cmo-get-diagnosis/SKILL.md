@@ -193,6 +193,20 @@ can decide.
 
 ---
 
+## Present results
+Before presenting results, read `cmogpt:output-conventions` for the
+current output format and rendering mode, and follow it — headline +
+mechanism, 2-4 supporting metrics, mandatory "Do this" with a target
+number, and "Go deeper" follow-ups.
+
+Use the selection logic above to decide *what* leads and what the
+recommendation is; `output-conventions` governs *how* it's shaped and
+rendered. Do not duplicate formatting rules here — if the shared
+convention ever needs a skill-specific exception, flag it for review
+rather than overriding it locally.
+
+---
+
 ## Do not
 
 - Do not list every candidate the payload returns
