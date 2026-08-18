@@ -4,6 +4,14 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
 
 ---
 
+## [1.43] — 2026-08-09
+
+### new feature - Visual cards 
+
+- `cmo-primary` — added visual card, summarize findings, concise answers 
+
+---
+
 ## [1.42] — 2026-08-07
 
 ### Skills — `cmo-primary` visual output overhaul
