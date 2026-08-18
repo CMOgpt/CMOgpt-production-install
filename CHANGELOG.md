@@ -4,6 +4,30 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
 
 ---
 
+## [1.44] — 2026-08-18
+
+### Manifest — missing skills and tool registration
+
+- `plugin.json` — added 6 skills that existed on disk but were not declared
+  in the `skills` list: `cmo-adjust-marketing-spend`,
+  `cmo-contribution-margin`, `cmo-get-diagnosis`,
+  `cmo-health-check-card-design`, `cmo-output-conventions`,
+  `ui-visualization-test`. This was the root cause of
+  `ui-visualization-test` not being found at runtime — the skill folder
+  existed but was never loaded into the plugin
+- `plugin.json` — added `ui_render_test` to the `tools` list (dummy
+  diagnostic tool used only by `ui-visualization-test` to verify MCP Apps
+  `ui://` rendering); backing implementation added to the MCP server tool
+  DB
+
+### Manifest
+
+- Bumped `version` to `1.44`
+- `cmo-version` — updated to report `1.44`, build `2608181500`, release
+  date `2026-08-18`
+
+---
+
 ## [1.43] — 2026-08-09
 
 ### new feature - Visual cards 

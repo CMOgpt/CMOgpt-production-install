@@ -2,7 +2,7 @@
   "name": "cmogpt",
   "displayName": "CMOgpt — AI CMO for Shopify",
   "tagline": "AI-powered business diagnosis and strategy for Shopify brands.",
-  "version": "1.43",
+  "version": "1.44",
   "description": "ecommerce performance intelligence for DTC brands.",
 
   "author": {
@@ -143,6 +143,12 @@
       "title": "Update Target",
       "description": "Writes a new founder-set target value for a metric. Mutates live target data — only called after the founder explicitly confirms target_name and target_value.",
       "readOnlyHint": false
+    },
+    {
+      "name": "ui_render_test",
+      "title": "UI Render Test",
+      "description": "Dummy diagnostic tool that returns a ui:// resource to verify MCP Apps rendering works in the host. Used only by the ui-visualization-test skill.",
+      "readOnlyHint": true
     }
   ],
 
@@ -163,7 +169,13 @@
     "./skills/cmo-analyze-ltv",
     "./skills/cmo-inspect-customer",
     "./skills/cmo-update-marketing-spend-business-target",
-    "./skills/cmo-version"
+    "./skills/cmo-version",
+    "./skills/cmo-adjust-marketing-spend",
+    "./skills/cmo-contribution-margin",
+    "./skills/cmo-get-diagnosis",
+    "./skills/cmo-health-check-card-design",
+    "./skills/cmo-output-conventions",
+    "./skills/ui-visualization-test"
   ],
 
   "capabilities": {
