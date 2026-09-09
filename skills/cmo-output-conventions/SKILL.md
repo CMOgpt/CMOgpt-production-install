@@ -7,9 +7,11 @@ description: >
   metric read, a diagnosis, a recommendation, or a next step. Does not
   apply to raw data lists, open-ended discussion, or conceptual
   explanations, and has one documented exception for the weekly health
-  digest (see "When this applies" below). Centralizing this here means a
-  rendering-mode or format change is a single-file edit instead of a
-  12-skill edit.
+  digest (see "When this applies" below). Also defines a separate,
+  always-applies rule against pasting raw tool output (JSON, error
+  payloads, empty-result envelopes) into any reply — see "Never surface
+  raw tool output" below. Centralizing this here means a rendering-mode or
+  format change is a single-file edit instead of a 12-skill edit.
 ---
 
 # CMOgpt — Output Conventions
@@ -23,7 +25,7 @@ applies, which threshold matters. This file owns *how it's packaged.*
 
 ## Current rendering mode
 
-**`RENDERING_MODE: PLAIN_TEXT_DEFAULT`**
+**`RENDERING_MODE: MARKDOWN_CARD`**
 
 Update this line — and only this line, in most cases — when the rendering
 picture changes. Everything below in "Which output do I emit" reads this
@@ -72,6 +74,44 @@ actual index of what's standard vs. what has its own dedicated design.
 
 ---
 
+## Never surface raw tool output
+
+This rule is not gated by "When this applies" above — it applies to every
+reply, finding or not, in every rendering mode. A founder reads plain
+sentences, not JSON. A tool's raw response — an error object, a status
+payload, an empty-result envelope — is an implementation detail for you to
+interpret, never text to paste into a reply.
+
+This comes up most often with:
+- **Empty / not-yet-processed results** — e.g. `list_ltv_customers` or
+  `get_cohort_analysis` returning something like `{"result": "empty",
+  "message": "Processing not yet completed"}` because a pipeline job
+  hasn't run yet. Translate to one plain sentence: what isn't ready yet,
+  and what the founder should do about it (usually: check back later, or
+  ask for a metric from a tool that doesn't depend on that job).
+- **Tool errors** (auth, timeout, malformed parameter). Translate to one
+  plain sentence about what went wrong and whether the founder needs to do
+  anything (usually not — say so, don't hand them a debugging task).
+
+**Bad:**
+```
+{"result": "empty", "message": "Processing not yet completed. Tell founder to try later"}
+```
+
+**Good:**
+"Your LTV/cohort data hasn't finished processing yet for this segment —
+worth checking back shortly. Want me to pull `get_ltv_segments` instead so
+you have a number in the meantime?"
+
+If you've already retried the same tool with different parameters more
+than once this session and keep getting the same empty/error result, say
+that plainly instead of retrying again silently — a repeated identical
+result across different parameter combinations means the parameters are
+very unlikely to be the cause, and another silent retry just costs the
+founder time without new information.
+
+---
+
 ## Field rules (apply regardless of rendering mode)
 
 *(Does not apply to `cmo-health-check` — see documented exception above.)*
@@ -102,26 +142,87 @@ actual index of what's standard vs. what has its own dedicated design.
 Check `RENDERING_MODE` above. This section applies to every skill using
 the standard card shape. `cmo-health-check` reads the same flag but
 applies it to its own dedicated shape defined in
-`cmogpt:cmo-health-check-card-design` — the plain-text/HTML distinction
-below still governs *whether that dedicated design renders as styled HTML
-or plain text*, it just doesn't reshape into headline+metrics+do-this.
+`cmogpt:cmo-health-check-card-design` (not yet updated to the Markdown
+card shape as of this change — tracked separately) — the mode below still
+governs *which shape that dedicated design renders in*, it just doesn't
+reshape into headline+metrics+do-this.
 
-**`PLAIN_TEXT_DEFAULT`** → always emit the plain-text shape below. This is
-correct on every surface CMOgpt runs on today — native chat (desktop,
-browser, mobile), Claude Code, Cowork. It doesn't depend on the host
-rendering HTML, so it's the safe default when you're unsure which surface
-you're on.
+**`MARKDOWN_CARD`** *(current default)* → emit the Markdown card shape
+below. This is plain CommonMark/GFM — bold, a table, a blockquote, emoji —
+not raw HTML and not a custom fenced block a host has to specially parse
+to render. It renders as a visually distinct card (bordered table,
+highlighted blockquote) on every surface CMOgpt runs on today — claude.ai
+web, Claude Desktop, Claude Code — because rendering standard Markdown in
+an assistant reply is core, always-on behavior on those surfaces, not a
+feature that needs confirming the way an MCP Apps `ui://` binding does.
+(Assessed 2026-09-09; not separately lab-verified via
+`ui-visualization-test` because that test targets `ui://` resource
+rendering specifically, a different code path from how this skill's own
+reply text renders.)
 
-**`HTML_CARD_CONFIRMED`** *(not active yet — reserved for when a confirmed
+**`PLAIN_TEXT_DEFAULT`** *(legacy fallback)* → emit the flat plain-text
+shape with no table or blockquote formatting. Fall back to this only if a
+specific surface is ever confirmed to flatten or strip Markdown — not
+observed on any CMOgpt surface so far.
+
+**`HTML_CARD_CONFIRMED`** *(not active — reserved for when a confirmed
 MCP Apps `ui://` resource binding is live)* → emit the HTML card shape
-instead, on the specific surface(s) that binding covers. Until this flag is
-flipped, do not emit raw HTML in a normal chat reply — it will not render
-as a card; it will show as plain or escaped text, which is worse than the
-plain-text template below.
+instead, on the specific surface(s) that binding covers. The most recent
+`ui-visualization-test` run (2026-09-09) did not produce a valid PASS — the
+test tool itself returned a malformed response rather than a `ui://`
+resource, so it isn't evidence either way — this flag stays reserved
+regardless. Until it is flipped, do not emit raw HTML in a normal chat
+reply — it will not render as a card; it will show as plain or escaped
+text, which is worse than the Markdown card below.
 
 ---
 
-### Primary output: plain text
+### Primary output: Markdown card
+
+```
+**{HEADLINE_FACT} — {HEADLINE_MECHANISM}**
+
+| Metric | Reading |
+|---|---|
+| {METRIC_LABEL} | {METRIC_VALUE} ({METRIC_DELTA}) |
+| {METRIC_LABEL} | {METRIC_VALUE} ({METRIC_DELTA}) |
+<!-- 2-4 rows total -->
+
+> 💡 **Do this:** {ONE_SPECIFIC_PRESCRIPTIVE_ACTION_WITH_TARGET_NUMBER}
+
+**Go deeper:** {FOLLOWUP_QUESTION_1} · {FOLLOWUP_QUESTION_2} · {FOLLOWUP_QUESTION_3}
+```
+
+Prefix the headline with a single state emoji — 🟢 good / 🟡 watch / 🔴
+bad — matching the overall read, same rule as before: state maps to
+whether the finding is good/watch/bad, never to metric category. Only mark
+an individual metric row the same way if its own state is clear from the
+data; leave a row unmarked rather than guess when the underlying numbers
+are themselves noisy or an artifact (e.g. a one-order week) — don't invent
+confidence the data doesn't support.
+
+**Example — good:**
+
+```
+🟡 **Sales up 12% — but the gain is coming from discounting, not loyalty.**
+
+| Metric | Reading |
+|---|---|
+| Repeat share | -15% vs last month |
+| Repeat discount depth | +31% |
+| Conversion rate | 1.12% (below 1.8–4.5% benchmark) |
+
+> 💡 **Do this:** Cap repeat-customer discounts back toward ~14% — where they sat last month — before this becomes their new price expectation.
+
+**Go deeper:** How is repeat discounting trending? · What's driving low conversion? · Show my LTV by segment
+```
+
+Keep "Go deeper" as literal questions the founder can type back — no
+click handler in a plain chat turn; there's no host to receive a click.
+
+### Secondary output: plain text (fallback)
+
+Use only when `RENDERING_MODE` above is `PLAIN_TEXT_DEFAULT`.
 
 ```
 {HEADLINE_FACT} — {HEADLINE_MECHANISM}
@@ -153,7 +254,7 @@ Keep "Go deeper" as literal questions the founder can type back — no
 `sendPrompt()`-style click handler in a plain chat turn; there's no host to
 receive the click.
 
-### Secondary output: HTML card (reserved — see rendering mode above)
+### Tertiary output: HTML card (reserved — see rendering mode above)
 
 Use only when `RENDERING_MODE` above is `HTML_CARD_CONFIRMED` for the
 current surface — a surface you control end-to-end, or a production
@@ -196,7 +297,7 @@ mode is active — e.g. nothing, or a link to a paid-tier feature.]`
 
 ---
 
-### Example — bad (reject this shape in either rendering mode)
+### Example — bad (reject this shape in any rendering mode)
 
 ```
 This week your sales performance shows some interesting trends. Revenue increased
@@ -217,19 +318,22 @@ of a recommendation.
 
 ## Updating this file
 
-When the rendering picture changes (e.g. an MCP Apps `ui://` binding is
-confirmed reliable in production — see cmo-primary for what "confirmed"
-means and how to test it):
+When the rendering picture changes (e.g. a specific surface is confirmed to
+strip Markdown, dropping back to `PLAIN_TEXT_DEFAULT`; or an MCP Apps
+`ui://` binding is confirmed reliable in production, moving to
+`HTML_CARD_CONFIRMED` — see `ui-visualization-test` for how to check that):
 
 1. Flip `RENDERING_MODE` at the top of this file.
-2. Update field values in the HTML template if the design system changed.
+2. If moving to `HTML_CARD_CONFIRMED`, update field values in the HTML
+   template if the design system changed.
 3. Do **not** touch the 11 standard-shape terminal skills — they all defer
    here, so this is the only edit needed for them.
 4. `cmo-health-check` reads this same flag but renders its own dedicated
-   design — its HTML template lives in `cmogpt:cmo-health-check-card-design`,
-   not here, so update that file's HTML block too if the design system's
-   field values changed. Flipping the flag here still activates it; you
-   just have two HTML templates to keep current instead of one.
+   design — its templates live in `cmogpt:cmo-health-check-card-design`,
+   not here. As of this change, that file has not yet been updated to add
+   a Markdown card shape (still plain-text default there) — update it
+   separately to bring health check in line, then keep its HTML template
+   current too whenever the design system's field values change.
 
 If a second skill ever needs its own exception the way `cmo-health-check`
 does, add it as its own subsection under "When this applies," with the

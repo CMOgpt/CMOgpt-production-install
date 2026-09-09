@@ -4,6 +4,60 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
 
 ---
 
+## [1.45] — 2026-09-09
+
+### `cmo-output-conventions` — new default rendering shape: Markdown card
+
+- Added `MARKDOWN_CARD` as a new `RENDERING_MODE`, and made it the active
+  default (previously `PLAIN_TEXT_DEFAULT`). Renders the standard
+  finding-card shape (headline, 2-4 metric table, "Do this" blockquote, Go
+  deeper) as plain CommonMark/GFM — bold, table, blockquote, emoji — no
+  raw HTML, no custom fenced block for a host to specially parse.
+- Rationale: claude.ai web and Claude Desktop already render standard
+  Markdown for every assistant reply as core behavior, so this ships today
+  without depending on the MCP Apps `ui://` rendering path (still unverified
+  — see below). The demo build's `cmo-card` fenced-JSON approach was
+  considered and rejected for production: it only renders as a card on the
+  demo's own custom frontend (cjmap.cmogpt.io), and would show as raw JSON
+  text on claude.ai / Claude Desktop / Claude Code.
+- `PLAIN_TEXT_DEFAULT` kept as a documented fallback shape, not removed.
+- `HTML_CARD_CONFIRMED` stays reserved/inactive — the 2026-09-09
+  `ui-visualization-test` run did not produce a valid PASS (the
+  `ui_render_test` tool returned a malformed response — raw MySQL
+  write-result metadata instead of a `ui://` resource — rather than a clean
+  rendering signal; flagged separately as a server-side bug to fix before
+  the next test run).
+- Scope: this change covers `cmo-primary` and the other terminal skills
+  that defer to `cmo-output-conventions`. `cmo-health-check` keeps its own
+  dedicated design in `cmo-health-check-card-design`, not yet updated to
+  the Markdown card shape — tracked as a follow-up.
+
+### `cmo-output-conventions` — never surface raw tool output
+
+- Added a new always-applies rule (independent of "When this applies" and
+  `RENDERING_MODE`): never paste a tool's raw response — JSON, an error
+  object, an empty-result envelope — into a founder-facing reply.
+- Covers the observed failure case: `list_ltv_customers` /
+  `get_cohort_analysis` returning `{"result": "empty", "message":
+  "Processing not yet completed"}` while a pipeline job hasn't run, and the
+  raw payload was echoed to the founder verbatim instead of being
+  translated into a plain sentence.
+- Also added guidance against silent repeated retries: if the same tool
+  keeps returning the same empty/error result across different parameter
+  combinations in one session, say so plainly instead of retrying again —
+  the parameters are very unlikely to be the cause at that point.
+- Scope: this is a `cmo-output-conventions` rule, so it applies to every
+  terminal skill that defers to it, without touching those skills
+  individually.
+
+### Manifest
+
+- Bumped `version` to `1.45`
+- `cmo-version` — updated to report `1.45`, build `2609091500`, release
+  date `2026-09-09`
+
+---
+
 ## [1.44] — 2026-08-18
 
 ### Manifest — missing skills and tool registration
