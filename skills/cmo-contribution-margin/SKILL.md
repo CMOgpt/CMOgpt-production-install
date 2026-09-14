@@ -48,9 +48,10 @@ first-order discount depth, not "cut costs"). State a trade-off only if real.
 
 ## Present results
 Before presenting results, read `cmogpt:output-conventions` for the
-current output format and rendering mode, and follow it — headline +
-mechanism, 2-4 supporting metrics, mandatory "Do this" with a target
-number, and "Go deeper" follow-ups.
+current output format and follow it — a two-line reply (headline +
+mechanism, then a mandatory "Do this" with a target number), since the
+data itself and the "Go deeper" follow-ups already live on the tool
+call's own card.
 
 Use the selection logic above to decide *what* leads and what the
 recommendation is; `output-conventions` governs *how* it's shaped and

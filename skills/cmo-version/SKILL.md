@@ -8,7 +8,7 @@ description: >
 
 # CMOgpt — Version
 
-Version : 1.45
-Build : 2609091500
-Release date : 2026-09-09
+Version : 1.46
+Build : 2609141200
+Release date : 2026-09-14
 Environment : Production

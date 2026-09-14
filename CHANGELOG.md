@@ -4,6 +4,65 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
 
 ---
 
+## [1.46] — 2026-09-14
+
+### `ui-visualization-test` — root cause of earlier `ui://` rendering FAIL found and fixed
+
+- Confirmed 2026-09-09: `ui://` MCP Apps rendering **does work** on claude.ai
+  web. Earlier FAIL results were not the suspected upstream Anthropic-side
+  issue — they were a bug in this connector's own `ui/initialize` handshake
+  payload (it sent `clientInfo` / a nested `capabilities` shape instead of
+  the top-level `appInfo` / `appCapabilities` fields the host's schema
+  expects). The host returned a Zod validation error naming the bad fields;
+  the old FAIL path silently swallowed it as a generic "fallback
+  placeholder" instead of surfacing it.
+- Updated the skill's troubleshooting guidance: a future FAIL should first
+  check the browser console for a rejected `ui/initialize` /
+  `ui/message` response before assuming it's the upstream issue again — a
+  malformed request looks identical to an unsupported host from the
+  outside.
+
+### `cmo-output-conventions` — replaced the `RENDERING_MODE` flag with the tool's own `ui://` card
+
+- With `ui://` rendering confirmed working, removed the three-way
+  `RENDERING_MODE` flag (`MARKDOWN_CARD` / `PLAIN_TEXT_DEFAULT` /
+  `HTML_CARD_CONFIRMED`) and the branching Markdown/plain-text/HTML
+  templates it gated. The data tool call itself now renders its own card
+  (table, KPI strip, or chart) via the connector, and carries "Go deeper"
+  follow-ups as real buttons through the tool call's `go_deeper` argument.
+- The model's own reply for a finding is now just two lines: headline +
+  mechanism, then a mandatory "Do this" with a target number. The old
+  2-4-row supporting-metrics table and the written "Go deeper" line are
+  removed from the standard reply shape — both are now a redundant second
+  copy of what the tool's own card already shows.
+- Ripple update to the 5 terminal skills that reference this shape
+  (`cmo-contribution-margin`, `cmo-diagnose-contribution-margin`,
+  `cmo-diagnose-metrics`, `cmo-get-diagnosis`,
+  `cmo-optimize-marketing-budget`): their "Present results" section now
+  points at the two-line reply instead of the retired
+  metrics-table-plus-Go-deeper shape.
+
+### `cmo-health-check-card-design` — updated to match, kept as the one documented exception
+
+- Health check still writes its own six-indicator metric grid and a
+  literal "Go deeper" text line in the reply — explicitly kept as an
+  exception to the new `output-conventions` rule above, because its six
+  indicators come from six separate `get_metric_history` calls with no
+  single card able to show them together. Also pass the same follow-ups
+  through `go_deeper` on the last `get_metric_history` call as a bonus,
+  but the text line is still what the founder actually reads.
+- Verdict badge switched from a colored-role rendering (`success` /
+  `warning` / `danger`) to a plain emoji (🟢 / 🟡 / 🔴), consistent with
+  the simplified Markdown-only reply shape above.
+
+### `.mcp.json` — restored production connector URL
+
+- The working copy had been pointed at a local ngrok debug tunnel during
+  the `ui://` handshake investigation above; reverted back to
+  `https://connector.cmogpt.io/mcp` before this release.
+
+---
+
 ## [1.45] — 2026-09-09
 
 ### `cmo-output-conventions` — new default rendering shape: Markdown card

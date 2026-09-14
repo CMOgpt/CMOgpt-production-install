@@ -20,6 +20,18 @@ call a minimal test tool and look at what actually shows up. This skill
 runs that check on demand so it can be repeated every few weeks without
 reconstructing the procedure each time.
 
+**Confirmed 2026-09-09: `ui://` rendering works on claude.ai web.** Earlier
+FAIL results on this connector were *not* the upstream Anthropic-side bug
+this skill was written around — they were a bug in our own `ui/initialize`
+handshake payload (`clientInfo`/nested `capabilities` instead of the
+top-level `appInfo`/`appCapabilities` the host's schema actually expects).
+The host returned a Zod validation error identifying the exact bad field
+names; the earlier "FAIL — fallback placeholder" silently swallowed that
+error instead of surfacing it. If a future FAIL shows up, check the
+browser console for a rejected `ui/initialize` (or `ui/message`) response
+*before* assuming it's the upstream issue again — a wrong-shaped request
+looks identical to an unsupported host from the outside.
+
 ## Procedure
 
 1. Call `CMOgpt:ui_render_test` (the dedicated dummy tool — see
@@ -54,11 +66,14 @@ Result: {PASS | FAIL - fallback placeholder | FAIL - tool error}
 
 {One or two sentences on exactly what appeared, in plain language.}
 
-{If FAIL: nothing further needed from you — this is expected until Anthropic
-resolves the underlying rendering issue. Re-test in a few weeks.}
-{If PASS: this is a real, meaningful change — flag it to the team before
-enabling HTML_CARD_CONFIRMED in output-conventions, since a single pass
-on one surface doesn't confirm it holds across all surfaces.}
+{If FAIL: check the browser console for a rejected ui/initialize or
+ui/message response first — see the 2026-09-09 note above, our own
+handshake payload has caused this before. Only treat it as the upstream
+Anthropic-side issue if the console shows no rejection at all (request
+sent, no response ever comes back).}
+{If PASS: consistent with the 2026-09-09 finding — not itself news unless
+a surface that previously failed now passes, which is worth flagging to
+the team.}
 ```
 
 4. Do not draw conclusions beyond the single test run. One PASS on
@@ -69,9 +84,10 @@ on one surface doesn't confirm it holds across all surfaces.}
 
 ## What this skill does not do
 
-- It does not modify `RENDERING_MODE` in `output-conventions` — that's a
-  deliberate, manual decision the team makes after enough consistent PASS
-  results, not something this test should trigger automatically.
+- It does not change anything in `output-conventions` — that file no
+  longer gates the data/go-deeper card behind a rendering-mode flag (it's
+  handled by the connector directly, confirmed working as of 2026-09-09);
+  this test exists to catch a future regression, not to unlock a feature.
 - It does not test any business logic, metric accuracy, or diagnosis
   quality — the dummy data in the test tool is fixed and fictional
   precisely so this stays a pure rendering check, decoupled from whether

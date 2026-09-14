@@ -13,44 +13,66 @@ description: >
 
 ## Why this is separate from the standard card
 
-The standard `output-conventions` card is built for one finding: a
-headline, a mechanism, 2-4 metrics, one action. Health check carries more
-than that by design — six to seven weekly indicators, a priority issue,
-a prescription, and a verdict — because it's meant to answer "is my
-business okay this week?" in one glance, not drill into one thing. Forcing
-it into the generic shape would either cut real information or blow past
-the 4-metric cap. So it gets its own layout, following the same design
-system and field-quality rules as the generic card (mandatory action, no
-vague prescriptions, mobile-first), just arranged differently.
+The standard `output-conventions` reply is built for one finding from one
+tool call: a headline, a mechanism, one action — the data itself stays on
+that tool's own card. Health check carries more than that by design — six
+to seven weekly indicators pulled from six separate tool calls, a priority
+issue, a prescription, and a verdict — because it's meant to answer "is my
+business okay this week?" in one glance, not drill into one thing. There
+is no single card that could hold all six indicators together (see below),
+so unlike the standard shape, health check's reply carries the metric grid
+itself. It still follows the same field-quality rules as the standard
+shape (mandatory action, no vague prescriptions, mobile-first), just with
+more content and its own layout.
+
+## Why the metric grid and "Go deeper" stay in your reply here
+
+`cmogpt:output-conventions` has the general rule: don't re-list a tool's
+data in your own reply, and don't write "Go deeper" as text — both already
+live on that tool call's own card. Health check is the deliberate
+exception to *that* part specifically, for a data-flow reason, not a
+design preference: the six indicators come from **six separate
+`get_metric_history` calls** (see `cmo-health-check`'s procedure), not one
+call returning one clean table. There is no single card that could show
+all six together — each call's card would show just one metric on its own.
+The founder-facing "read it all in one scan" promise this skill exists for
+can only be delivered by *you* consolidating those six results into one
+grid in your reply. Same logic for "Go deeper": with six-plus scattered
+tool calls in the sequence, there's no one obviously-final card to attach
+it to that the founder would see right next to your verdict — so it's
+written as text here, unlike the standard single-call finding. (Still pass
+the same follow-ups through the `go_deeper` argument on the last
+`get_metric_history` call too — harmless, and a bonus button on that card
+for anyone who does look at it — but the text line below remains what the
+founder actually reads.)
 
 ## Content model
 
-Every health check card has exactly these parts, in this order:
+Every health check reply has exactly these parts, in this order:
 
 1. **Store + week context** — store name, week-ending date, data freshness note if stale.
-2. **Verdict** — exactly one of: growing profitably / growing with risk / needs attention. Rendered as a colored badge, sentence case.
-3. **Headline metric** — total sales, as a large number with its week-over-week delta. This is the one number a founder should absorb in half a second.
-4. **Supporting metric grid** — the remaining six indicators (AOV, discount %, marketing spend, MER, contribution margin, repeat ratio), each with value and delta.
+2. **Verdict** — exactly one of: growing profitably / growing with risk / needs attention.
+3. **Headline metric** — total sales, as a number with its week-over-week delta. This is the one number a founder should absorb in half a second.
+4. **Supporting metric grid** — the six indicators (AOV, discount %, marketing spend, MER, contribution margin, repeat ratio), each with value and delta — consolidated here because no single tool call's card can show all six together (see above).
 5. **Priority issue** — the single metric most likely to compound if unaddressed, called out separately with real numbers. Not folded into the grid — it needs its own visual weight.
 6. **Prescription ("Do this")** — one to two concrete actions with a target number. Never generic.
-7. **Go deeper** — 2-3 follow-up prompts.
+7. **Go deeper** — 2-3 follow-up prompts, written as a literal line (see above for why, unlike the standard finding shape).
 
-Verdict color mapping:
-- Growing profitably → `success` role (green)
-- Growing with risk → `warning` role (amber)
-- Needs attention → `danger` role (red)
+Verdict emoji mapping:
+- Growing profitably → 🟢
+- Growing with risk → 🟡
+- Needs attention → 🔴
 
-## Primary output: plain text
+## Reply shape
 
-This is the default on every surface today (see `RENDERING_MODE` in
-`output-conventions`). Same content model as above, laid out for a chat
-message rather than a card.
+Plain Markdown — bold + emoji — renders correctly as-is on every surface
+CMOgpt runs on (claude.ai web, Claude Desktop, Claude Code).
 
 ```
 {STORE_NAME} — week ending {DATE}
 {DATA_FRESHNESS_NOTE, only if stale}
 
-Verdict: {GROWING PROFITABLY | GROWING WITH RISK | NEEDS ATTENTION}
+{VERDICT_EMOJI} Verdict: {GROWING PROFITABLY | GROWING WITH RISK | NEEDS ATTENTION}
 
 Total sales: {VALUE} ({DELTA} vs last week)
 
@@ -68,13 +90,17 @@ Do this: {ONE_TO_TWO_CONCRETE_ACTIONS_WITH_TARGET_NUMBERS}
 Go deeper: {FOLLOWUP_1} · {FOLLOWUP_2} · {FOLLOWUP_3}
 ```
 
+Also pass the same follow-ups through the `go_deeper` argument on the last
+`get_metric_history` call in Step 3 (see "Why the metric grid and 'Go
+deeper' stay in your reply here" above) — but still write this line too.
+
 **Worked example (Maku The Label, week ending Aug 8, 2026):**
 
 ```
 MAKU The Label — week ending Aug 8, 2026
 Data current to: Aug 8, 2026
 
-Verdict: NEEDS ATTENTION
+🔴 Verdict: NEEDS ATTENTION
 
 Total sales: $42,260 (-16.0% vs last week)
 
@@ -95,10 +121,16 @@ Go deeper: How is repeat ratio trending over 30 days? · What's driving
 the traffic decline specifically? · Show my LTV by segment
 ```
 
-## Secondary output: HTML card (reserved — see rendering mode in output-conventions)
+## Secondary output: HTML card (reserved — not active)
 
-Only emit this when `output-conventions`' `RENDERING_MODE` is
-`HTML_CARD_CONFIRMED` for the current surface.
+`output-conventions` no longer defines a rendering-mode flag to gate this
+on — the standard finding shape now relies on the connector's own `ui://`
+card for data, not on the model emitting HTML text. Health check doesn't
+have an equivalent yet, since its data comes from six separate tool calls
+rather than one (see above) — this template is kept as a reference for
+what a future dedicated health-check `ui://` card could look like, but do
+not emit it in a normal chat reply today; it will show as plain or escaped
+text, not a rendered card.
 
 ```html
 <div style="background: var(--surface-2); border-radius: 12px; border: 0.5px solid var(--border); padding: 1rem 1.25rem;">
