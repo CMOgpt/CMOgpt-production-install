@@ -4,40 +4,7 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
 
 ---
 
-## [1.48] — 2026-09-16
-
-### Bug fix — three retired skills had resurfaced as duplicates
-
-The 1.47 changelog's "added 6 skills that existed on disk but were not
-declared in `skills[]`" fix was overbroad: 3 of those 6 (`cmo-get-diagnosis`,
-`cmo-contribution-margin`, `cmo-adjust-marketing-spend`) were retired
-duplicates from earlier restructures — kept on disk as historical copies,
-never meant to be re-declared — that got swept back into the manifest
-alongside the 3 genuinely new skills (`cmo-health-check-card-design`,
-`cmo-output-conventions`, `ui-visualization-test`, which are correctly
-still there). The result: every skill listing showed near-identical pairs
-(`cmo-diagnose-metrics` next to `cmo-get-diagnosis`, `cmo-diagnose-contribution-margin`
-next to `cmo-contribution-margin`, `cmo-optimize-marketing-budget` next to
-`cmo-adjust-marketing-spend`), each pair with the same trigger phrases —
-confusing to route on and confusing to read.
-
-- Removed the 3 retired entries from `skills[]` and deleted their folders
-  from disk (`cmo-get-diagnosis`, `cmo-contribution-margin`,
-  `cmo-adjust-marketing-spend`) — their canonical replacements
-  (`cmo-diagnose-metrics`, `cmo-diagnose-contribution-margin`,
-  `cmo-optimize-marketing-budget`) already carry the current tool-call
-  parameter names and are the only ones referenced by `cmo-router` and
-  `capabilities.useCases`, so nothing else in the plugin pointed at the
-  retired copies
-- `README.md` — the Skills table still listed `/cmo-diagnose-growth`
-  (a rename that was never actually shipped — the live skill is still
-  `cmo-build-profit`) and `/cmo-adjust-marketing-spend` (retired above).
-  Both rows corrected to the skills that actually exist on disk
-- Bumped `version` to `1.48`
-
----
-
-## [1.47] — 2026-09-15
+## [1.47] — 2026-09-16
 
 ### New shared component — `cmo-pulse-card`
 
@@ -73,6 +40,32 @@ confusing to route on and confusing to read.
   old markdown-grid reply shape and the "reserved, not active" HTML
   template are removed — that template is now the live one in
   `cmo-pulse-card`.
+
+### Bug fix — three retired skills had resurfaced as duplicates
+
+Declaring the 3 genuinely new skills above (`cmo-health-check-card-design`,
+`cmo-output-conventions`, `ui-visualization-test`) in `skills[]` was done
+alongside re-adding 3 retired duplicates from earlier restructures
+(`cmo-get-diagnosis`, `cmo-contribution-margin`, `cmo-adjust-marketing-spend`)
+— kept on disk as historical copies, never meant to be re-declared. The
+result: every skill listing showed near-identical pairs
+(`cmo-diagnose-metrics` next to `cmo-get-diagnosis`, `cmo-diagnose-contribution-margin`
+next to `cmo-contribution-margin`, `cmo-optimize-marketing-budget` next to
+`cmo-adjust-marketing-spend`), each pair with the same trigger phrases —
+confusing to route on and confusing to read.
+
+- Removed the 3 retired entries from `skills[]` and deleted their folders
+  from disk (`cmo-get-diagnosis`, `cmo-contribution-margin`,
+  `cmo-adjust-marketing-spend`) — their canonical replacements
+  (`cmo-diagnose-metrics`, `cmo-diagnose-contribution-margin`,
+  `cmo-optimize-marketing-budget`) already carry the current tool-call
+  parameter names and are the only ones referenced by `cmo-router` and
+  `capabilities.useCases`, so nothing else in the plugin pointed at the
+  retired copies
+- `README.md` — the Skills table still listed `/cmo-diagnose-growth`
+  (a rename that was never actually shipped — the live skill is still
+  `cmo-build-profit`) and `/cmo-adjust-marketing-spend` (retired above).
+  Both rows corrected to the skills that actually exist on disk
 
 ---
 
