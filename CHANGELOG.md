@@ -41,20 +41,29 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
   template are removed — that template is now the live one in
   `cmo-pulse-card`.
 
+### Removed 3 legacy duplicate skills
+
+`cmo-get-diagnosis`, `cmo-contribution-margin`, and
+`cmo-adjust-marketing-spend` have been present since the plugin's initial
+commit, sitting alongside their newer counterparts
+(`cmo-diagnose-metrics`, `cmo-diagnose-contribution-margin`,
+`cmo-optimize-marketing-budget`) with near-identical `description`
+triggers — confusing to route on and confusing to read.
+
+- Removed the 3 duplicate entries from `skills[]` and deleted their
+  folders from disk. Their canonical replacements already carry the
+  current tool-call parameter names and are the only ones referenced by
+  `cmo-router` and `capabilities.useCases`, so nothing else in the plugin
+  pointed at the retired copies.
+
 ### `README.md` — corrected stale Skills table rows
 
 - The Skills table still listed `/cmo-diagnose-growth` (a rename that was
   never actually shipped — the live skill is still `cmo-build-profit`) and
   pointed the weekly spend-review row at `/cmo-adjust-marketing-spend`
-  instead of the current `/cmo-optimize-marketing-budget`. Both rows
-  corrected to the skills `cmo-router` and `capabilities.useCases` actually
-  point to.
-
-> Note: `cmo-get-diagnosis`, `cmo-contribution-margin`, and
-> `cmo-adjust-marketing-spend` still exist on disk alongside their newer
-> counterparts (`cmo-diagnose-metrics`, `cmo-diagnose-contribution-margin`,
-> `cmo-optimize-marketing-budget`) with near-identical `description`
-> triggers. Left as-is pending Andrew's call on whether to retire them.
+  (removed above) instead of the current `/cmo-optimize-marketing-budget`.
+  Both rows corrected to the skills `cmo-router` and `capabilities.useCases`
+  actually point to.
 
 ---
 
