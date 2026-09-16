@@ -2,7 +2,7 @@
   "name": "cmogpt",
   "displayName": "CMOgpt — AI CMO for Shopify",
   "tagline": "AI-powered business diagnosis and strategy for Shopify brands.",
-  "version": "1.46",
+  "version": "1.48",
   "description": "ecommerce performance intelligence for DTC brands.",
 
   "author": {
@@ -170,11 +170,9 @@
     "./skills/cmo-inspect-customer",
     "./skills/cmo-update-marketing-spend-business-target",
     "./skills/cmo-version",
-    "./skills/cmo-adjust-marketing-spend",
-    "./skills/cmo-contribution-margin",
-    "./skills/cmo-get-diagnosis",
     "./skills/cmo-health-check-card-design",
     "./skills/cmo-output-conventions",
+    "./skills/cmo-pulse-card",
     "./skills/ui-visualization-test"
   ],
 
