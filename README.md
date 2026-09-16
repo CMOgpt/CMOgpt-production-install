@@ -30,8 +30,8 @@ The connector uses OAuth 2.0 with PKCE. Your Shopify data is accessed read-only 
 | Health Check | `/cmo-health-check` | Full weekly business health snapshot |
 | Diagnose Metrics | `/cmo-diagnose-metrics` | Root-cause drill-down on any metric |
 | Diagnose Contribution Margin | `/cmo-diagnose-contribution-margin` | Margin pressure breakdown |
-| Diagnose Growth | `/cmo-diagnose-growth` | Growth quality vs revenue-buying diagnosis |
-| Adjust Marketing Spend | `/cmo-adjust-marketing-spend` | Weekly spend recommendation with dollar amount |
+| Growth Quality | `/cmo-build-profit` | Growth quality vs revenue-buying diagnosis |
+| Optimize Marketing Budget | `/cmo-optimize-marketing-budget` | Weekly spend recommendation with dollar amount |
 | Set Marketing Budget | `/cmo-set-marketing-budget` | MER-based budget calculation |
 | Explain Marketing & Advertising | `/cmo-explain-marketing-advertising` | Definitions for marketing metrics and terms |
 | Terminology | `/cmo-terminology` | CMOgpt-specific metric definitions |

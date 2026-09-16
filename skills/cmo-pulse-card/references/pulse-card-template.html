@@ -1,0 +1,327 @@
+<title>Pulse Card</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#F5F6FB; --surface:#FFFFFF; --surface-2:#EEF0F7;
+    --line:#E1E4EE; --line-strong:#CBD0E0;
+    --ink:#12172A; --ink-muted:#5B6178; --ink-faint:#9096AB;
+    --accent:#3947C4; --accent-ink:#2B3699; --accent-soft:#ECEEFA;
+    --good:#177A50; --good-soft:#E5F4EC;
+    --watch:#9A6B08; --watch-soft:#FBF1DC;
+    --bad:#B33B22; --bad-soft:#FBEAE4;
+    --shadow: 0 1px 2px rgba(18,23,42,0.04), 0 10px 30px -12px rgba(18,23,42,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0C0F1A; --surface:#141827; --surface-2:#1B2032;
+      --line:#282F45; --line-strong:#39415C;
+      --ink:#E9EAF3; --ink-muted:#9CA2BA; --ink-faint:#6C7288;
+      --accent:#8B96FF; --accent-ink:#AEB6FF; --accent-soft:#20264A;
+      --good:#4FCE93; --good-soft:#132C22;
+      --watch:#E4B94E; --watch-soft:#332A11;
+      --bad:#F0876A; --bad-soft:#33201A;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 20px 40px -20px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0C0F1A; --surface:#141827; --surface-2:#1B2032;
+    --line:#282F45; --line-strong:#39415C;
+    --ink:#E9EAF3; --ink-muted:#9CA2BA; --ink-faint:#6C7288;
+    --accent:#8B96FF; --accent-ink:#AEB6FF; --accent-soft:#20264A;
+    --good:#4FCE93; --good-soft:#132C22;
+    --watch:#E4B94E; --watch-soft:#332A11;
+    --bad:#F0876A; --bad-soft:#33201A;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 20px 40px -20px rgba(0,0,0,0.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+    padding-inline:20px; padding-block:32px;
+  }
+  .page{ max-width:460px; margin:0 auto; }
+
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    box-shadow:var(--shadow); padding:20px; display:flex; flex-direction:column; gap:16px;
+  }
+  .block{ position:relative; }
+  .tag{
+    font-family:"IBM Plex Mono", monospace; font-size:10px; letter-spacing:0.08em;
+    color:var(--ink-faint); text-transform:uppercase; display:block; margin-bottom:8px;
+  }
+  .tag b{ color:var(--ink-muted); font-weight:600; }
+  hr{ border:none; border-top:1px solid var(--line); margin:0; }
+  [hidden]{ display:none !important; }
+
+  .head{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .head-id{ display:flex; flex-direction:column; gap:2px; }
+  .store{ font-weight:600; font-size:15.5px; }
+  .period{ font-size:12.5px; color:var(--ink-muted); }
+  .freshness{ font-size:11.5px; color:var(--watch); margin-top:1px; }
+  .verdict{
+    display:inline-flex; align-items:center; gap:6px; padding:5px 11px 5px 9px;
+    border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap;
+  }
+  .verdict .dot{ width:7px; height:7px; border-radius:50%; flex:none; }
+  .verdict.tone-good{ background:var(--good-soft); color:var(--good); }
+  .verdict.tone-good .dot{ background:var(--good); }
+  .verdict.tone-watch{ background:var(--watch-soft); color:var(--watch); }
+  .verdict.tone-watch .dot{ background:var(--watch); }
+  .verdict.tone-bad{ background:var(--bad-soft); color:var(--bad); }
+  .verdict.tone-bad .dot{ background:var(--bad); }
+
+  .hero{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .hero-value{
+    font-family:"IBM Plex Mono", monospace; font-variant-numeric: tabular-nums;
+    font-size:30px; font-weight:600; letter-spacing:-0.01em;
+  }
+  .hero-delta{ font-family:"IBM Plex Mono", monospace; font-size:13px; font-weight:500; }
+  .hero-delta.up{ color:var(--good); } .hero-delta.down{ color:var(--bad); } .hero-delta.flat{ color:var(--ink-faint); }
+  .hero-label{ font-size:12.5px; color:var(--ink-muted); width:100%; }
+
+  .metrics{ display:flex; flex-wrap:wrap; gap:8px; }
+  .tile{
+    flex:0 1 156px; min-width:130px;
+    background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
+    padding:9px 11px; display:flex; flex-direction:column; gap:3px;
+  }
+  .tile-label{ font-size:11.5px; color:var(--ink-muted); }
+  .tile-value{ font-family:"IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size:15px; font-weight:600; }
+  .tile-delta{ font-family:"IBM Plex Mono", monospace; font-size:11.5px; font-weight:500; display:inline-flex; align-items:center; gap:3px; }
+  .up{ color:var(--good); } .down{ color:var(--bad); } .flat{ color:var(--ink-faint); }
+
+  .callout{ border-radius:12px; padding:12px 13px; display:flex; gap:10px; align-items:flex-start; }
+  .callout-icon{
+    flex:none; width:20px; height:20px; border-radius:6px;
+    display:flex; align-items:center; justify-content:center; font-size:12px; margin-top:1px;
+  }
+  .callout-text{ font-size:13.5px; line-height:1.5; }
+  .callout-text b{ font-weight:600; }
+  .callout.tone-watch{ background:var(--watch-soft); }
+  .callout.tone-watch .callout-icon{ background:var(--watch); color:var(--surface); }
+  .callout.tone-watch .callout-text b{ color:var(--watch); }
+  .callout.tone-bad{ background:var(--bad-soft); }
+  .callout.tone-bad .callout-icon{ background:var(--bad); color:var(--surface); }
+  .callout.tone-bad .callout-text b{ color:var(--bad); }
+  .callout.tone-good{ background:var(--good-soft); }
+  .callout.tone-good .callout-icon{ background:var(--good); color:var(--surface); }
+  .callout.tone-good .callout-text b{ color:var(--good); }
+  .callout.tone-accent{ background:var(--accent-soft); }
+  .callout.tone-accent .callout-icon{ background:var(--accent); color:var(--surface); }
+  .callout.tone-accent .callout-text b{ color:var(--accent-ink); }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:7px; }
+  .chip{
+    font-family:"IBM Plex Sans", sans-serif; font-size:12.5px; font-weight:500; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line-strong); border-radius:999px;
+    padding:7px 12px 7px 13px; display:inline-flex; align-items:center; gap:5px;
+    cursor:pointer; transition:border-color .15s, color .15s, background .15s;
+  }
+  .chip:hover{ border-color:var(--accent); color:var(--accent-ink); }
+  .chip:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .chip svg{ width:11px; height:11px; flex:none; }
+  .chip .icon-copy{ display:inline-flex; }
+  .chip .icon-check{ display:none; }
+  .chip.copied{ border-color:var(--good); color:var(--good); background:var(--good-soft); }
+  .chip.copied .icon-copy{ display:none; }
+  .chip.copied .icon-check{ display:inline-flex; }
+
+  .hint{
+    margin-top:10px; border-radius:10px; padding:11px 13px; font-size:13px; line-height:1.55;
+    background:var(--accent-soft); border:1px solid var(--line);
+    display:flex; align-items:flex-start; gap:8px;
+    opacity:0; transform:translateY(-3px); transition:opacity .18s, transform .18s;
+  }
+  .hint.show{ opacity:1; transform:translateY(0); }
+  .hint b{ color:var(--accent-ink); }
+  .hint .kbd{
+    font-family:"IBM Plex Mono", monospace; font-size:11px; background:var(--surface);
+    border:1px solid var(--line-strong); border-radius:4px; padding:1px 5px;
+  }
+  .hint.error{ background:var(--bad-soft); color:var(--bad); }
+
+  footer{ max-width:460px; margin:14px auto 0; font-size:11.5px; color:var(--ink-faint); text-align:center; }
+</style>
+
+<div class="page">
+  <div class="card">
+
+    <div class="block">
+      <span class="tag"><b>01</b> &nbsp;VERDICT</span>
+      <div class="head">
+        <div class="head-id">
+          <span class="store" id="pc-store"></span>
+          <span class="period" id="pc-period"></span>
+          <span class="freshness" id="pc-freshness" hidden></span>
+        </div>
+        <span class="verdict" id="pc-verdict"><span class="dot"></span><span id="pc-verdict-label"></span></span>
+      </div>
+      <div class="hero">
+        <span class="hero-value" id="pc-hero-value"></span>
+        <span class="hero-delta" id="pc-hero-delta"></span>
+        <span class="hero-label" id="pc-hero-label"></span>
+      </div>
+    </div>
+
+    <hr id="pc-hr-1" hidden>
+
+    <div class="block" id="pc-metrics-block" hidden>
+      <span class="tag"><b>02</b> &nbsp;METRICS</span>
+      <div class="metrics" id="pc-metrics"></div>
+    </div>
+
+    <hr>
+
+    <div class="block">
+      <span class="tag"><b>03</b> &nbsp;PRIORITY</span>
+      <div class="callout" id="pc-priority">
+        <span class="callout-icon" id="pc-priority-icon"></span>
+        <span class="callout-text" id="pc-priority-text"></span>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="tag"><b>04</b> &nbsp;DO THIS</span>
+      <div class="callout tone-accent" id="pc-dothis">
+        <span class="callout-icon" id="pc-dothis-icon">&#9673;</span>
+        <span class="callout-text" id="pc-dothis-text"></span>
+      </div>
+    </div>
+
+    <div class="block" id="pc-godeeper-block" hidden>
+      <span class="tag"><b>05</b> &nbsp;GO DEEPER</span>
+      <div class="chips" id="pc-chips"></div>
+      <div class="hint" id="pc-hint" hidden></div>
+    </div>
+
+  </div>
+  <footer>CMOgpt Pulse Card</footer>
+</div>
+
+<script type="application/json" id="pulse-card-data">
+{{CARD_DATA}}
+</script>
+
+<script>
+(function(){
+  var DATA = JSON.parse(document.getElementById("pulse-card-data").textContent);
+
+  function el(id){ return document.getElementById(id); }
+  function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  // priority/do_this html fields are authored by the skill, not user input --
+  // allow a small safe subset (<b>) rather than escaping, since they carry
+  // intentional emphasis on key figures.
+  function richText(s){ return String(s == null ? "" : s); }
+
+  el("pc-store").textContent = DATA.store_name || "";
+  el("pc-period").textContent = DATA.period_label || "";
+  if (DATA.freshness_note){
+    el("pc-freshness").hidden = false;
+    el("pc-freshness").textContent = DATA.freshness_note;
+  }
+
+  var vt = (DATA.verdict && DATA.verdict.tone) || "watch";
+  el("pc-verdict").className = "verdict tone-" + vt;
+  el("pc-verdict-label").textContent = (DATA.verdict && DATA.verdict.label) || "";
+
+  el("pc-hero-value").textContent = (DATA.hero && DATA.hero.value) || "";
+  var hd = el("pc-hero-delta");
+  hd.textContent = (DATA.hero && DATA.hero.delta) || "";
+  hd.className = "hero-delta " + ((DATA.hero && DATA.hero.delta_tone) || "flat");
+  el("pc-hero-label").textContent = (DATA.hero && DATA.hero.label) || "";
+
+  var tiles = (DATA.tiles || []).slice(0, 6);
+  if (tiles.length > 0){
+    el("pc-metrics-block").hidden = false;
+    el("pc-hr-1").hidden = false;
+    var wrap = el("pc-metrics");
+    tiles.forEach(function(t){
+      var d = document.createElement("div");
+      d.className = "tile";
+      d.innerHTML =
+        '<span class="tile-label">' + esc(t.label) + '</span>' +
+        '<span class="tile-value">' + esc(t.value) + '</span>' +
+        '<span class="tile-delta ' + esc(t.tone || "flat") + '">' + esc(t.delta) + '</span>';
+      wrap.appendChild(d);
+    });
+  }
+
+  var pr = DATA.priority || {};
+  el("pc-priority").className = "callout tone-" + (pr.tone || "watch");
+  el("pc-priority-icon").innerHTML = pr.icon || "&#9873;";
+  el("pc-priority-text").innerHTML = richText(pr.html);
+
+  var dt = DATA.do_this || {};
+  if (dt.icon) el("pc-dothis-icon").innerHTML = dt.icon;
+  el("pc-dothis-text").innerHTML = richText(dt.html);
+
+  var questions = (DATA.go_deeper || []).slice(0, 4);
+  if (questions.length > 0){
+    el("pc-godeeper-block").hidden = false;
+    var chipsWrap = el("pc-chips");
+    var hint = el("pc-hint");
+    var isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || "");
+    var pasteKey = isMac ? "&#8984;V" : "Ctrl+V";
+
+    function copyText(text){
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        return navigator.clipboard.writeText(text);
+      }
+      return new Promise(function(resolve, reject){
+        try{
+          var ta = document.createElement("textarea");
+          ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+          document.body.appendChild(ta); ta.focus(); ta.select();
+          var ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          ok ? resolve() : reject(new Error("execCommand copy failed"));
+        }catch(e){ reject(e); }
+      });
+    }
+    function showHint(question, ok){
+      hint.classList.remove("show", "error");
+      void hint.offsetWidth;
+      if (ok){
+        hint.innerHTML =
+          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px;color:var(--good)"><path d="M4 12l5 5L20 6"/></svg>' +
+          '<span>Copied &mdash; <b>&ldquo;' + esc(question) + '&rdquo;</b><br>Paste it into your chat (<span class="kbd">' + pasteKey + '</span>) and hit send to ask it for real, with full context.</span>';
+      } else {
+        hint.classList.add("error");
+        hint.textContent = "Couldn't copy automatically — select and copy the question text from the button, then paste it into your chat.";
+      }
+      hint.hidden = false;
+      requestAnimationFrame(function(){ hint.classList.add("show"); });
+    }
+
+    questions.forEach(function(q){
+      var chip = document.createElement("span");
+      chip.className = "chip";
+      chip.tabIndex = 0;
+      chip.setAttribute("role", "button");
+      chip.setAttribute("aria-label", "Copy question: " + q);
+      chip.innerHTML =
+        esc(q) + " " +
+        '<svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M5 15.5A2 2 0 0 1 3 13.5v-8A2.5 2.5 0 0 1 5.5 3h8A2 2 0 0 1 15.5 5"/></svg>' +
+        '<svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>';
+      function run(){
+        copyText(q).then(function(){
+          chip.classList.add("copied");
+          showHint(q, true);
+          setTimeout(function(){ chip.classList.remove("copied"); }, 1600);
+        }).catch(function(){ showHint(q, false); });
+      }
+      chip.addEventListener("click", run);
+      chip.addEventListener("keydown", function(e){
+        if (e.key === "Enter" || e.key === " "){ e.preventDefault(); run(); }
+      });
+      chipsWrap.appendChild(chip);
+    });
+  }
+})();
+</script>
