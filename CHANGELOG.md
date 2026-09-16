@@ -4,6 +4,69 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
 
 ---
 
+## [1.47] — 2026-09-16
+
+### New shared component — `cmo-pulse-card`
+
+- Added `cmo-pulse-card`: one visual card template (verdict, hero metric,
+  0–6 supporting tiles, priority, do this, go deeper) that every finding
+  now renders through — HTML/CSS/JS template lives in
+  `references/pulse-card-template.html`, filled from a JSON payload and
+  published as a persistent Artifact, one per store, updated in place
+  rather than spawned fresh per finding.
+- Go Deeper is copy-to-clipboard on this card, not a live button — a
+  hosted Artifact page can't post into the live conversation (platform
+  boundary, not an oversight; documented in the skill's "Why Go Deeper
+  copies instead of asking"). The founder pastes the copied question into
+  chat and sends it themselves to get a real, full-context turn.
+
+### `cmo-output-conventions` — every finding now builds/updates a Pulse Card
+
+- The standard two-line reply (headline + mechanism, then "Do this")
+  stays, but is no longer the whole output: every finding also
+  publishes/updates that store's Pulse Card via `cmo-pulse-card`, hero-only
+  (0–1 supporting tiles) for a standard single-metric finding.
+- The underlying tool call's own `go_deeper` argument is still worth
+  passing — bonus native `ui://` card, real clickable buttons where
+  supported — but the Pulse Card's chips are now the primary go-deeper
+  path for the founder.
+
+### `cmo-health-check-card-design` — now a content spec, not a rendering spec
+
+- Health check's six-indicator digest still has its own *content* rules
+  (what leads, verdict thresholds, priority-issue selection — unchanged),
+  but rendering now goes through the same `cmo-pulse-card` component as
+  every other finding, with up to 6 supporting tiles instead of 0–1. The
+  old markdown-grid reply shape and the "reserved, not active" HTML
+  template are removed — that template is now the live one in
+  `cmo-pulse-card`.
+
+### Removed 3 legacy duplicate skills
+
+`cmo-get-diagnosis`, `cmo-contribution-margin`, and
+`cmo-adjust-marketing-spend` have been present since the plugin's initial
+commit, sitting alongside their newer counterparts
+(`cmo-diagnose-metrics`, `cmo-diagnose-contribution-margin`,
+`cmo-optimize-marketing-budget`) with near-identical `description`
+triggers — confusing to route on and confusing to read.
+
+- Removed the 3 duplicate entries from `skills[]` and deleted their
+  folders from disk. Their canonical replacements already carry the
+  current tool-call parameter names and are the only ones referenced by
+  `cmo-router` and `capabilities.useCases`, so nothing else in the plugin
+  pointed at the retired copies.
+
+### `README.md` — corrected stale Skills table rows
+
+- The Skills table still listed `/cmo-diagnose-growth` (a rename that was
+  never actually shipped — the live skill is still `cmo-build-profit`) and
+  pointed the weekly spend-review row at `/cmo-adjust-marketing-spend`
+  (removed above) instead of the current `/cmo-optimize-marketing-budget`.
+  Both rows corrected to the skills `cmo-router` and `capabilities.useCases`
+  actually point to.
+
+---
+
 ## [1.46] — 2026-09-14
 
 ### `ui-visualization-test` — root cause of earlier `ui://` rendering FAIL found and fixed
