@@ -41,31 +41,20 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
   template are removed — that template is now the live one in
   `cmo-pulse-card`.
 
-### Bug fix — three retired skills had resurfaced as duplicates
+### `README.md` — corrected stale Skills table rows
 
-Declaring the 3 genuinely new skills above (`cmo-health-check-card-design`,
-`cmo-output-conventions`, `ui-visualization-test`) in `skills[]` was done
-alongside re-adding 3 retired duplicates from earlier restructures
-(`cmo-get-diagnosis`, `cmo-contribution-margin`, `cmo-adjust-marketing-spend`)
-— kept on disk as historical copies, never meant to be re-declared. The
-result: every skill listing showed near-identical pairs
-(`cmo-diagnose-metrics` next to `cmo-get-diagnosis`, `cmo-diagnose-contribution-margin`
-next to `cmo-contribution-margin`, `cmo-optimize-marketing-budget` next to
-`cmo-adjust-marketing-spend`), each pair with the same trigger phrases —
-confusing to route on and confusing to read.
+- The Skills table still listed `/cmo-diagnose-growth` (a rename that was
+  never actually shipped — the live skill is still `cmo-build-profit`) and
+  pointed the weekly spend-review row at `/cmo-adjust-marketing-spend`
+  instead of the current `/cmo-optimize-marketing-budget`. Both rows
+  corrected to the skills `cmo-router` and `capabilities.useCases` actually
+  point to.
 
-- Removed the 3 retired entries from `skills[]` and deleted their folders
-  from disk (`cmo-get-diagnosis`, `cmo-contribution-margin`,
-  `cmo-adjust-marketing-spend`) — their canonical replacements
-  (`cmo-diagnose-metrics`, `cmo-diagnose-contribution-margin`,
-  `cmo-optimize-marketing-budget`) already carry the current tool-call
-  parameter names and are the only ones referenced by `cmo-router` and
-  `capabilities.useCases`, so nothing else in the plugin pointed at the
-  retired copies
-- `README.md` — the Skills table still listed `/cmo-diagnose-growth`
-  (a rename that was never actually shipped — the live skill is still
-  `cmo-build-profit`) and `/cmo-adjust-marketing-spend` (retired above).
-  Both rows corrected to the skills that actually exist on disk
+> Note: `cmo-get-diagnosis`, `cmo-contribution-margin`, and
+> `cmo-adjust-marketing-spend` still exist on disk alongside their newer
+> counterparts (`cmo-diagnose-metrics`, `cmo-diagnose-contribution-margin`,
+> `cmo-optimize-marketing-budget`) with near-identical `description`
+> triggers. Left as-is pending Andrew's call on whether to retire them.
 
 ---
 
