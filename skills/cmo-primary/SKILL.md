@@ -28,6 +28,15 @@ description: >
    `cmogpt:output-conventions` and follow it. This applies whether or not
    this skill happened to load first — see the note at the end of this
    file.
+5. This applies even more directly to the case where **no CMOgpt skill
+   loads at all** — e.g. a CMOgpt tool (`about_my_account`,
+   `get_diagnosis`, or any other `mcp__CMOgpt__*` tool) gets called
+   directly, ad hoc, without `cmo-router`, this skill, or any named
+   terminal skill ever being invoked. That is still a CMOgpt reply the
+   moment a CMOgpt tool returns data, and `cmogpt:output-conventions`
+   still governs it — read and follow it before replying, exactly as if
+   `cmo-router` had routed there normally. Don't let "I just called one
+   tool" be a reason to skip it.
 
 > If the embedded catalog or decision tree below is ever stale, the
 > authoritative copy lives in the `get_metrics_catalog` and
@@ -214,3 +223,11 @@ ever loading. `output-conventions` is written as a standalone reference
 precisely so it doesn't depend on this file having loaded — each terminal
 skill points to it independently. Treat this section as documentation of
 that design, not as the enforcement mechanism itself.
+
+The same applies one level further out: nothing about CMOgpt requires
+*any* skill in this plugin to have loaded before a CMOgpt tool gets
+called. `cmogpt:output-conventions`'s own trigger is written to fire off
+the tool call itself, not off this skill or `cmo-router` — so a direct,
+unrouted call to `about_my_store`, `get_diagnosis`, or any other
+`mcp__CMOgpt__*` tool still owes the founder a properly-conventioned
+reply and a Pulse Card, with or without this file in the picture.
