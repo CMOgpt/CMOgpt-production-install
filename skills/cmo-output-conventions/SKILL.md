@@ -1,18 +1,21 @@
 ---
 name: output-conventions
 description: >
-  Shared output-format contract for every CMOgpt skill that presents a
-  finding, diagnosis, or recommendation to the founder. Read this before
-  presenting any reply that surfaces a finding — a metric read, a
-  diagnosis, a recommendation, or a next step. Every such finding renders
-  through the shared Pulse Card (`cmogpt:cmo-pulse-card`), hero-only for a
-  single metric. Does not apply to raw data lists, open-ended discussion,
-  or conceptual explanations, and has one documented exception for the
-  weekly health digest (see "When this applies" below). Also defines a
-  separate, always-applies rule against pasting raw tool output (JSON,
-  error payloads, empty-result envelopes) into any reply — see "Never
-  surface raw tool output" below. Centralizing this here means a format
-  change is a single-file edit instead of a 12-skill edit.
+  Shared output-format contract for every CMOgpt reply to the founder —
+  no exceptions. TRIGGER: read this before presenting ANY reply, and
+  immediately whenever any CMOgpt connector tool (any `mcp__CMOgpt__*`
+  tool) is called for any reason — including a one-off or direct call
+  made without going through `cmo-router`, `cmo-primary`, or a named
+  terminal skill first; see "When this applies" for why there's no path
+  around it. Every reply — finding, raw data list, discussion, or
+  conceptual explanation — publishes or updates the shared Pulse Card
+  (`cmogpt:cmo-pulse-card`), hero-only for a single metric, thin when
+  there's no store-specific number to anchor on. One documented content
+  (not rendering) exception for the weekly health digest — see "When this
+  applies" below. Also defines an always-applies rule against pasting raw
+  tool output into any reply — see "Never surface raw tool output" below.
+  Centralizing this here means a format change is a single-file edit
+  instead of a 12-skill edit.
 ---
 
 # CMOgpt — Output Conventions
@@ -22,33 +25,57 @@ Terminal skills (health check, diagnose-metrics, LTV, cohort, budget, etc.)
 own *what* gets said — which metric leads, which verdict applies, which
 threshold matters. This file owns *how it's packaged.*
 
-**The short version:** every finding renders as a Pulse Card — a
+**The short version:** every reply renders (or refreshes) a Pulse Card — a
 persistent, visual artifact defined and built in `cmogpt:cmo-pulse-card` —
-plus a short two-line chat reply that gives the fast read for someone
-scanning history who never opens the card. Your own reply text stays
-short on purpose: the card carries the number(s); your two lines carry the
-reasoning that turns those numbers into a recommendation. Don't re-list
-metrics or write a "Go deeper" line in your reply text — both live on the
-card.
+plus a short chat reply that gives the fast read for someone scanning
+history who never opens the card. Your own reply text stays short on
+purpose: the card carries the number(s); your reply carries the reasoning
+that turns those numbers into a recommendation, or the plain-prose answer
+when there's no finding to prescribe. Don't re-list metrics or write a
+"Go deeper" line in your reply text — both live on the card.
 
 ---
 
 ## When this applies
 
-Use the format below for any reply that surfaces a finding: a metric read,
-a diagnosis, a recommendation, a next-step suggestion.
+**This rule attaches to the tool call, not to how you arrived at it.** The
+instant any `mcp__CMOgpt__*` tool is invoked in a conversation — whether
+reached through `cmo-router`, `cmo-primary`, a named terminal skill
+(`cmo-diagnose-metrics`, `cmo-health-check`, etc.), or called directly and
+ad hoc with no other CMOgpt skill loaded first — the reply that follows is
+a CMOgpt reply and this file governs it. "I only called one tool, I'm not
+really running a CMOgpt skill" is not a valid reason to skip this file:
+there is no such thing as a CMOgpt tool call that isn't a CMOgpt reply.
+This includes a single context-setting call like `about_my_account` or
+`about_my_store` made on its own — even that reply still gets a Pulse
+Card (thinnest honest version, per "Non-finding replies" below) rather
+than a plain-text summary.
 
-Do **not** force this shape onto:
-- A raw data list (recent orders, customer list, LTV decile table) — the
-  tool call's own card already shows this as a table; you don't need a
-  headline/mechanism framing, and no Pulse Card either.
-- An open-ended discussion or back-and-forth ("why does MER matter,"
-  "what's the difference between X and Y") — respond in plain prose.
-- A conceptual explanation with no store-specific finding attached.
+Use the format below for **every reply, with no exceptions** — a metric
+read, a diagnosis, a recommendation, a next-step suggestion, a raw data
+list, an open-ended discussion, or a conceptual explanation. There is no
+bucket that skips the Pulse Card; only what the card holds changes:
 
-If you're not sure which bucket a reply falls into, ask: *is there a
-finding and a recommendation here, or just information?* Finding +
-recommendation → use this format. Information only → don't force it.
+- **A finding or recommendation** — build the full card: real headline,
+  mechanism, "Do this." This is the common case the field rules below are
+  written for.
+- **A raw data list** (recent orders, customer list, LTV decile table) —
+  the tool call's own card still shows the table, but also publish or
+  update the store's Pulse Card, hero-framed around what the list shows
+  (e.g. "42 orders this week, 3 flagged for review"). Tiles and priority
+  can be thin or omitted; the card itself is never skipped.
+- **An open-ended discussion or back-and-forth** ("why does MER matter,"
+  "what's the difference between X and Y") — answer in plain prose in
+  chat as before, and still publish or refresh the store's Pulse Card
+  rather than leaving it stale, anchoring the hero on whatever
+  store-specific number is closest at hand.
+- **A conceptual explanation with no store-specific finding attached** —
+  same: plain-prose answer in chat, and still touch the store's Pulse
+  Card (at minimum refresh it) so it stays the one persistent artifact a
+  founder can always find current.
+
+"There's no real finding here" is no longer a reason to skip the card —
+build the thinnest honest version of it instead of skipping it.
 
 ### Documented exception: `cmo-health-check`
 
@@ -71,22 +98,24 @@ way, and add a one-line pointer to it here.
 
 ---
 
-## Every finding renders as a Pulse Card
+## Every reply renders a Pulse Card
 
 Every data tool on this connector still renders its own result as a card
 too — a sortable table, a KPI strip, or a bar chart, generated straight
 from what the tool returned, and still worth passing `go_deeper` on (see
 below) since a surface with a confirmed `ui://` binding renders those as
 real clickable buttons that post directly into the conversation. That
-tool-level card is a useful bonus, but it is **not** the finding's primary
+tool-level card is a useful bonus, but it is **not** the reply's primary
 presentation anymore — the Pulse Card is.
 
-For every finding, follow the procedure in `cmogpt:cmo-pulse-card`: build
-the content (this file's field rules below govern quality), assemble the
-card's JSON, fill the template, and publish/update the one Pulse Card
-artifact for that store. Read that file for the full mechanics — it is
-the single source of truth for the *rendering*, the same way this file is
-the single source of truth for the *reasoning*.
+For every reply, follow the procedure in `cmogpt:cmo-pulse-card`: build
+the content (this file's field rules below govern quality for findings;
+use the thinnest honest version — e.g. hero only, empty tiles/priority —
+when there's no finding to prescribe), assemble the card's JSON, fill the
+template, and publish/update the one Pulse Card artifact for that store.
+Read that file for the full mechanics — it is the single source of truth
+for the *rendering*, the same way this file is the single source of truth
+for the *reasoning*.
 
 **Still pass `go_deeper` on the underlying tool call too** — 1–4
 `{label, prompt}` follow-ups, same as before. It's low-cost and gives a
@@ -106,6 +135,14 @@ reply, finding or not. A founder reads plain sentences, not JSON. A tool's
 raw response — an error object, a status payload, an empty-result envelope
 — is an implementation detail for you to interpret, never text to paste
 into a reply, and never something to put into a Pulse Card's JSON either.
+
+This is the one legitimate case where you don't force a fresh Pulse Card
+build: a tool error or not-yet-processed pipeline job isn't a reply type
+("finding," "raw data list," "discussion") in the "When this applies"
+sense at all — it's an infrastructure hiccup with nothing genuine to put
+on a card. Leave the existing card as-is and say so in plain text; don't
+manufacture card content out of an error just to satisfy "every reply
+touches the card."
 
 This comes up most often with:
 - **Empty / not-yet-processed results** — e.g. `list_ltv_customers` or
@@ -140,9 +177,11 @@ founder time without new information.
 
 ## Field rules
 
-*(Content rules below apply everywhere, including `cmo-health-check`; only
-the *rendering* mechanics differ there — see the documented exception
-above.)*
+*(Content rules below govern the finding case — a metric read, diagnosis,
+recommendation, or next-step suggestion, including `cmo-health-check`'s
+own content spec. For a raw data list, discussion, or conceptual reply
+with no finding to prescribe, skip straight to "Non-finding replies"
+below instead of forcing these fields.)*
 
 - **Headline states the fact AND the mechanism**, not just the fact.
   - Bad: "Sales are up 12% this week."
@@ -167,7 +206,37 @@ above.)*
 
 ---
 
+## Non-finding replies (raw data lists, discussion, conceptual)
+
+These still touch the Pulse Card (see "When this applies" above) but do
+**not** get forced into the headline/"Do this" shape below — that shape
+is for findings, and bolting a fake mechanism or fake action onto a plain
+answer is worse than the answer itself.
+
+- **Answer in plain prose**, exactly as you would without this file
+  existing — a real answer to "why does MER matter," a real data table,
+  a real explanation.
+- **Still publish or refresh the store's Pulse Card** per
+  `cmogpt:cmo-pulse-card`, using whatever store-specific number is
+  genuinely closest at hand for the hero (recency of period, most recent
+  headline metric already on file, count of rows in a list, etc.). If
+  truly nothing store-specific exists to anchor on, refresh the existing
+  card as-is (same content, e.g. just confirming period/freshness) rather
+  than skipping the touch entirely — the point is the card never goes
+  stale or missing, not that every touch changes its numbers.
+- **Never invent a headline mechanism, verdict, or "Do this" that isn't
+  there.** A thin card (hero only, no priority claim) is correct; a
+  fabricated one is not — this file forces card *presence*, never forces
+  false confidence.
+- Close the chat reply with the same one-line card note as the finding
+  case (e.g. "Card refreshed above.") so the founder knows to check it.
+
+---
+
 ## Your reply shape
+
+*(Applies to the finding case. For non-finding replies, use plain prose
+per the section above, plus the one-line card note.)*
 
 ```
 {STATE_EMOJI} **{HEADLINE_FACT} — {HEADLINE_MECHANISM}**

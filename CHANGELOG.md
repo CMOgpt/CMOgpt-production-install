@@ -4,6 +4,37 @@ All notable changes to the **CMOgpt Connector** plugin are documented here.
 
 ---
 
+## [1.48] — 2026-09-17
+
+### `cmo-output-conventions` / `cmo-pulse-card` / `cmo-primary` — Pulse Card now has no exceptions
+
+Previously the Pulse Card rule carved out three buckets that skipped it
+entirely: raw data lists, open-ended discussion, and conceptual
+explanations with no store-specific finding attached. In practice this
+gave the model an easy excuse to skip the card on borderline replies.
+That carve-out is removed — every CMOgpt reply now publishes or refreshes
+the store's Pulse Card, with a new "Non-finding replies" section in
+`cmo-output-conventions` defining the thin, honest version to build when
+there's no real finding (plain-prose chat answer + a thin/refreshed card,
+never a fabricated headline or "Do this").
+
+- `cmo-output-conventions`: "When this applies" now covers every reply
+  type with no exceptions; added "Non-finding replies" section; kept the
+  one legitimate skip case (tool errors / not-yet-processed pipeline
+  results — an infrastructure hiccup, not a reply type).
+- `cmo-pulse-card`: updated "What this is" and "Do not" to match — the
+  card is never skipped, only thinned.
+- **Trigger widened to ad-hoc tool calls.** All three files now make
+  explicit that the rule attaches to the CMOgpt *tool call*, not to
+  having gone through `cmo-router`/`cmo-primary`/a named terminal skill
+  first — a single direct call to something like `about_my_account` or
+  `get_diagnosis` with no other CMOgpt skill loaded still owes the
+  founder a Pulse Card (thinnest honest version) and the standard
+  conventions, not a plain-text summary.
+- Trimmed `cmo-output-conventions`'s `description` frontmatter to fit the
+  1024-character plugin validation limit (detail moved into the file body
+  instead, under "When this applies").
+
 ## [1.47] — 2026-09-16
 
 ### New shared component — `cmo-pulse-card`

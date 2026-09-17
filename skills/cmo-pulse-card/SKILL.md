@@ -1,24 +1,34 @@
 ---
 name: cmo-pulse-card
 description: >
-  Shared visual card component every CMOgpt finding renders through — one
-  template that scales from a single-metric diagnosis (hero only) up to
-  the six-metric weekly health check. Read this whenever
-  `cmogpt:cmo-output-conventions` or `cmogpt:cmo-health-check-card-design`
-  says to render a finding — it holds the template file and the
-  fill-and-publish procedure. Not a skill founders trigger by name.
+  Shared visual card component every CMOgpt reply renders or refreshes
+  through — one template that scales from a thin no-finding touch, up
+  through a single-metric diagnosis (hero only), up to the six-metric
+  weekly health check. Read this whenever `cmogpt:cmo-output-conventions`
+  or `cmogpt:cmo-health-check-card-design` says to render or refresh a
+  reply — it holds the template file and the fill-and-publish procedure.
+  Not a skill founders trigger by name. This includes a reply that only
+  called one CMOgpt tool ad hoc (e.g. `about_my_account`, `get_diagnosis`)
+  with no other CMOgpt skill invoked first — that tool call still owes the
+  store's Pulse Card a render or refresh; there is no CMOgpt tool call
+  this file doesn't apply to.
 ---
 
 # CMOgpt — Pulse Card (shared component)
 
 ## What this is
 
-Every CMOgpt reply that surfaces a finding — a single metric or the full
-weekly digest — renders through this one card: verdict, headline metric,
-0–6 supporting metrics, the priority issue, one prescribed action, and up
-to four Go Deeper follow-ups. The shape never changes; only how many
-supporting metrics section 02 holds does, and section 02 drops out
-entirely below 2 (see "Fixed structure").
+Every CMOgpt reply — a finding, a raw data list, an open-ended discussion,
+a conceptual explanation, or the full weekly digest — renders or refreshes
+through this one card: verdict, headline metric, 0–6 supporting metrics,
+the priority issue, one prescribed action, and up to four Go Deeper
+follow-ups. `cmogpt:cmo-output-conventions`'s "When this applies" has no
+exceptions — what changes per reply type is how much of this actually gets
+filled in, not whether the card gets touched. The shape never changes;
+only how many supporting metrics section 02 holds does, and section 02
+drops out entirely below 2 (see "Fixed structure"). For a non-finding
+reply, sections 02–05 can be thin or omitted — see
+`cmogpt:cmo-output-conventions`'s "Non-finding replies."
 
 `cmogpt:cmo-output-conventions` calls this with 0–1 supporting metrics for
 a standard single-finding reply. `cmogpt:cmo-health-check-card-design`
@@ -159,9 +169,10 @@ clipboard-copy — and this paragraph deleted, not left stale.
 
 - Do not publish a new Pulse Card artifact per finding — always update
   the one per store (step 4).
-- Do not render this for raw data lists, open-ended discussion, or
-  conceptual explanations — same scope boundary as
-  `cmogpt:cmo-output-conventions`'s "When this applies."
+- Do not skip this for raw data lists, open-ended discussion, or
+  conceptual explanations — `cmogpt:cmo-output-conventions`'s "When this
+  applies" has no exceptions. Build the thinnest honest version (per its
+  "Non-finding replies" section) instead of skipping the card.
 - Do not put a lone metric into a 1-tile section 02 — fold it into the
   hero and omit section 02 entirely.
 - Do not hand-write the card's HTML from scratch — always start from
